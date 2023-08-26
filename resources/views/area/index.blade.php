@@ -3,14 +3,21 @@
 @section('content')
     <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Areas</h1>
-        <div class="relative overflow-x-auto mt-3">
+        <div class="relative mt-3">
             <table id="activatedTable" class="w-full text-sm text-left">
                 <thead>
                     <tr>
                         <th class="py-5 px-2 pt-5">
                             <a href="{{ route('area.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New Area</a>
                         </th>
-                        <th class="py-5 px-2"></th> 
+                    </tr>
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                        
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,17 +42,20 @@
         <div class="flex flex-row gap-2 mt-5">
             <a href="{{ route('area.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New Area</a>
             <button type="button" id="show" class="undeline text-blue-600 font-semibold">Show Inactive Areas({{ $deactivated_count }})</button>
-            <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold`">Hide Inactive Areas</button>
+            <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold">Hide Inactive Areas</button>
         </div>
         <div id="inactive" class="hidden">
-            <div class="relative overflow-x-auto mt-3">
+            <h1 class="sm:text-2xl mt-5 font-bold">Deactivated</h1>
+            <div class="relative overflow-x-auto w-full">
                 <table id="deactivatedTable" class="w-full text-sm text-left">
                     <thead>
                         <tr>
-                            <th class="py-5 px-2 pt-5 sm:text-2xl">
-                                Deactivated
+                            <th scope="col" class="px-6 py-3">
+                                Name
                             </th>
-                            <th class="py-5 px-2"></th> 
+                            <th scope="col" class="px-6 py-3">
+
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

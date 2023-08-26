@@ -52,6 +52,5 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::patch('/update/{id}', [AreaController::class, 'update'])->name('area.update');
         Route::post('/deactivate/{id}', [AreaController::class, 'deactivate'])->name('area.deactivate');
         Route::post('/reactivate/{id}', [AreaController::class, 'reactivate'])->name('area.reactivate');
-        // Route::delete('/delete/{id}', [LocationController::class, 'destroy'])->name('location.destroy');
     });
 });
