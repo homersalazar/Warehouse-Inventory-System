@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col pt-5 px-5 sm:ml-9">
+    <div class="flex flex-col items-center pt-5 px-5 sm:ml-9">
         <h1 class="text-left text-lg sm:text-2xl font-bold">New Location</h1>
         <form method="POST" action="{{ route('location.store') }}">
             @csrf

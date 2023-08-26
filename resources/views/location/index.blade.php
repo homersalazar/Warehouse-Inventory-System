@@ -54,7 +54,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('location.edit', ['id' => $location->id]) }}" class="rounded-lg text-base px-5 py-2.5 mr-2 mb-2">
-                                    <i class="fa-regular fa-pen-to-square"></i>
+                                    <i class="fa-regular text-blue-600 fa-pen-to-square"></i>
                                 </a>
                             </td>
                         </tr>
