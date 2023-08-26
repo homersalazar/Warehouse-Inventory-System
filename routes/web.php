@@ -3,6 +3,7 @@
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Support\Facades\Route;
@@ -52,5 +53,17 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::patch('/update/{id}', [AreaController::class, 'update'])->name('area.update');
         Route::post('/deactivate/{id}', [AreaController::class, 'deactivate'])->name('area.deactivate');
         Route::post('/reactivate/{id}', [AreaController::class, 'reactivate'])->name('area.reactivate');
+    });
+});
+
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'manufacturer'], function () {
+        Route::get('/', [ManufacturerController::class, 'index'])->name('manufacturer.index');
+        Route::match(['get', 'post'], '/create', [ManufacturerController::class, 'create'])->name('manufacturer.create');
+        Route::post('/store', [ManufacturerController::class, 'store'])->name('manufacturer.store');
+        Route::get('/edit/{id}', [ManufacturerController::class, 'edit'])->name('manufacturer.edit');
+        Route::patch('/update/{id}', [ManufacturerController::class, 'update'])->name('manufacturer.update');
+        Route::post('/deactivate/{id}', [ManufacturerController::class, 'deactivate'])->name('manufacturer.deactivate');
+        Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');
     });
 });
