@@ -16,4 +16,9 @@ class Location extends Model
         'loc_state',
         'loc_zip',
     ];
+
+    public function user()
+    {
+        return $this->hasMany(User::class, 'location_id');
+    }
 }

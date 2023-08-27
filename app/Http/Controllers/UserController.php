@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function index(){
+        // $user_activated = User::with('location')->get();
         $user_activated = User::where('status', 0)->get();
         $user_deactivated = User::where('status', 1)->get();
         $deactivated_count = User::where('status', '=', 1)->count();        
@@ -43,7 +44,7 @@ class UserController extends Controller
             $user->name = $request->input('user_name');
             $user->email = $request->input('user_email');
             $user->role = $user->role == 0 ? 0 : $request->input('user_role');
-            $user->site = implode(", ", $selectedSite);
+            $user->location_id = implode(", ", $selectedSite);
             $user->save();
             return redirect()->route('user.index')->with('success', 'User updated successfully.');
         } else {

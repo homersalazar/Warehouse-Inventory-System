@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
+use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+Route::resource('/preference', PreferenceController::class)->middleware(['checkLoggedIn' , 'access', 'role:0']); // preference
+Route::resource('/dashboard', DashboardController::class)->middleware(['checkLoggedIn' , 'access', 'role:0']);
 
 Route::get('/login', [UserController::class, 'show_login'])->name('user.login');
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -38,11 +41,6 @@ Route::middleware(['checkLoggedIn' , 'role:0', 'access'])->group(function() {
         Route::post('/deactivate/{id}', [UserController::class, 'deactivate'])->name('user.deactivate');
         Route::post('/reactivate/{id}', [UserController::class, 'reactivate'])->name('user.reactivate');
     });
-});
-
-
-Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
-    Route::resource('/dashboard', DashboardController::class);
 });
 
 Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
@@ -79,4 +77,6 @@ Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
         Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');
     });
 });
+
+
 

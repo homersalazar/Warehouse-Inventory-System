@@ -46,7 +46,13 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $user->location_id }}
+                                {{ $user->location->loc_name }}  
+                                {{-- @foreach ($user->location as $locations)
+                                    {{ $locations->loc_name }}
+                                    @if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach                  --}}
                             </td>
                             <td class="px-6">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
@@ -111,7 +117,7 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $user->location_id }}
+                                {{-- {{ $user->locations->loc_name }} --}}
                             </td>
                             <td class="px-6">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">

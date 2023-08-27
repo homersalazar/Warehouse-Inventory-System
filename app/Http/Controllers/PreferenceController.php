@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Preference;
 use Illuminate\Http\Request;
 
 class PreferenceController extends Controller
@@ -13,7 +14,8 @@ class PreferenceController extends Controller
      */
     public function index()
     {
-        //
+        $pref = Preference::all();
+        return view('preference.index', compact('pref'));
     }
 
     /**
@@ -56,7 +58,8 @@ class PreferenceController extends Controller
      */
     public function edit($id)
     {
-        //
+        $pref = Preference::find($id);
+        return view('preference.edit', compact('pref'));
     }
 
     /**
@@ -68,7 +71,11 @@ class PreferenceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $pref = Preference::find($id);
+        $pref->pref_value = $request->pref_value;
+        $pref->save();    
+        return redirect()->route('preference.index')->with('success', 'Value has been updated successfully.');
+
     }
 
     /**
