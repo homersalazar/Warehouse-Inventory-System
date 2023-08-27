@@ -28,12 +28,24 @@ Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::get('/register', [UserController::class, 'show_register'])->name('user.register');
 Route::post('/register', [UserController::class, 'register'])->name('register');
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+Route::middleware(['checkLoggedIn' , 'role:0', 'access'])->group(function() {
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/', [UserController::class, 'index'])->name('user.index');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+        Route::patch('/update/{id}', [UserController::class, 'update'])->name('user.update');
+        Route::get('/edit/password/{id}', [UserController::class, 'edit_password'])->name('user.edit_password');
+        Route::patch('/update/password/{id}', [UserController::class, 'update_password'])->name('user.update_password');
+        Route::post('/deactivate/{id}', [UserController::class, 'deactivate'])->name('user.deactivate');
+        Route::post('/reactivate/{id}', [UserController::class, 'reactivate'])->name('user.reactivate');
+    });
+});
 
-Route::middleware('checkLoggedIn')->group(function() {
+
+Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
     Route::resource('/dashboard', DashboardController::class);
 });
 
-Route::middleware('checkLoggedIn')->group(function() {
+Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
     Route::group(['prefix' => 'location'], function () {
         Route::get('/', [LocationController::class, 'index'])->name('location.index');
         Route::match(['get', 'post'], '/create', [LocationController::class, 'create'])->name('location.create');
@@ -44,7 +56,7 @@ Route::middleware('checkLoggedIn')->group(function() {
     });
 });
 
-Route::middleware('checkLoggedIn')->group(function() {
+Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
     Route::group(['prefix' => 'area'], function () {
         Route::get('/', [AreaController::class, 'index'])->name('area.index');
         Route::match(['get', 'post'], '/create', [AreaController::class, 'create'])->name('area.create');
@@ -56,7 +68,7 @@ Route::middleware('checkLoggedIn')->group(function() {
     });
 });
 
-Route::middleware('checkLoggedIn')->group(function() {
+Route::middleware(['checkLoggedIn' , 'access'])->group(function() {
     Route::group(['prefix' => 'manufacturer'], function () {
         Route::get('/', [ManufacturerController::class, 'index'])->name('manufacturer.index');
         Route::match(['get', 'post'], '/create', [ManufacturerController::class, 'create'])->name('manufacturer.create');
@@ -67,3 +79,4 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');
     });
 });
+

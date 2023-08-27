@@ -10,7 +10,7 @@
     <div class="flex flex-col pt-5 px-5 sm:px-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Locations</h1>
         <div class="mt-3">
-            <table id="locationTable" style="width: 100%;"class="w-full text-sm text-left">
+            <table id="locationTable" style="width: 100%;" class="w-full text-sm text-left">
                 <thead class="text-xs uppercase">
                     <tr>
                         <th scope="col" class="py-5 px-2">

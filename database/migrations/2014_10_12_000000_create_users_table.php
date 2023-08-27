@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->smallInteger('role')->nullable();
             $table->smallInteger('status')->nullable();
-            $table->smallInteger('site')->nullable();
+            $table->string('site')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
