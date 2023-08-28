@@ -46,7 +46,7 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-                                {{ $user->location->loc_name }}  
+                                {{ $user->location_id == '' ? '' : $user->location->loc_name }}  
                                 {{-- @foreach ($user->location as $locations)
                                     {{ $locations->loc_name }}
                                     @if (!$loop->last)
@@ -78,6 +78,7 @@
             <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold">Hide Inactive Users</button>
         </div>
         <div id="inactive" class="hidden">
+            <p class="mt-5">NOTE: Please assign a transaction locations in edit before activate the user.</p>
             <table id="deactivatedTable" style="width: 100%;" class="w-full text-sm text-left">
                 <thead>
                     <tr>
@@ -126,9 +127,11 @@
                                 <a href="{{ route('user.edit_password' , ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
                                     <i class="fa-solid text-green-600 fa-key"></i>
                                 </a>
-                                <button type="button" onclick="reactivate_user('{{ $user->id }}' , '{{ $user->name }}')" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
-                                    <i class="fa-solid text-green-600 fa-circle-check"></i>
-                                </button>
+                                @if ($user->location_id != '')
+                                    <button type="button" onclick="reactivate_user('{{ $user->id }}' , '{{ $user->name }}')" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
+                                        <i class="fa-solid text-green-600 fa-circle-check"></i>
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

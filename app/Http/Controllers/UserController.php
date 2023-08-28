@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function index(){
-        // $user_activated = User::with('location')->get();
+        // $user_activated = User::where('status', 0)->with('location')->get();
         $user_activated = User::where('status', 0)->get();
         $user_deactivated = User::where('status', 1)->get();
         $deactivated_count = User::where('status', '=', 1)->count();        
@@ -66,7 +66,22 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while updating the password.');
         }
+    }
+
+    public function profile_update(Request $request, $id){
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required', 
+        ]);
         
+        try {
+            $user = User::findOrFail($id);
+            $user->password = bcrypt($request->input('password'));
+            $user->save();
+            return redirect()->route('dashboard.index')->with('success', 'User password updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while updating the password.');
+        }
     }
 
     public function deactivate(Request $request, $id)
@@ -87,6 +102,10 @@ class UserController extends Controller
         ->with('success', ucwords($request->name).' has been updated successfully.');
     }
 
+    public function profile($id){
+        $user = User::find($id);
+        return view('user.profile', compact('user'));
+    }
 
     public function show_login(){
         return view('user.login');
@@ -124,12 +143,12 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+            session(['role' => $user->role]);
+            session(['id' => $user->id]);
             session(['full_name' => $user->name]);
             session(['email' => $user->email]);
-            if ($user->role == 1 && $user->status == 1) {
-                return redirect()->route('dashboard.create')->with('success', 'Signed in');
-            } elseif ($user->role == 0 && $user->status == 0) {
-                return redirect()->route('dashboard.index')->withSuccess('Signed in'); // user - approved
+            if ($user->status == 0) {
+                return redirect()->route('dashboard.index')->with('success', 'Signed in');
             }else {
                 Auth::logout();
                 return redirect("login")->with('error', 'You do not have access to the dashboard');

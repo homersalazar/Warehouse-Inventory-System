@@ -3,7 +3,7 @@
 @section('content')
     <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Editing {{ ucwords($user->name) }}</h1>
-        <p class="mt-5 border-b-2 text-xl sm:text-2xl">Personal Data</p>
+        <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Personal Data</p>
         <div class="sm:ml-16 mt-5">
             <form action="{{ route('user.update', ['id' => $user->id]) }}" method="POST" id="user_form" class="flex flex-col gap-5">
                 @csrf
@@ -22,7 +22,7 @@
                 </div>
             </form>
         </div>
-        <p class="mt-5 border-b-2 text-xl sm:text-2xl">Role</p>
+        <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Role</p>
         <div class="sm:ml-16 mt-5">
             <fieldset>
                 <legend class="sr-only">Role</legend>

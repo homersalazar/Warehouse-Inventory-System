@@ -2,10 +2,27 @@
 
 @section('content')
     <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
-        <h1 class="text-left text-lg sm:text-2xl font-bold">Set Password for {{ ucwords($user->name) }}</h1>
-        <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Set Password</p>
+        <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Personal Data</p>
         <div class="sm:ml-16 mt-5">
-            <form action="{{ route('user.update_password', ['id' => $user->id]) }}" method="POST" class="flex flex-col gap-5">
+            <div class="flex flex-col gap-5">
+
+                <div class="flex flex-row gap-5">
+                    <label class="font-medium mt-2">Name:</label>
+                    <p class="mt-2">{{ ucwords($user->name) }}</p>
+                </div>
+                <div class="flex flex-row gap-5">
+                    <label class="font-medium mt-2">Email:</label>
+                    <p class="mt-2">{{ $user->email }}</p>
+                </div>
+                <div class="flex flex-row gap-5">
+                    <label class="font-medium mt-2">Company Admin:</label>
+                    <p class="mt-2">{{ $user->role == 0 ? 'Yes' : 'No' }}</p>
+                </div>
+            </div>
+        </div>
+        <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Change Your Password</p>
+        <div class="sm:ml-16 mt-5">
+            <form action="{{ route('user.profile_update', ['id' => $user->id]) }}" method="POST" class="flex flex-col gap-5">
                 @csrf
                 @method('PATCH')
                 <div class="flex flex-row gap-5">

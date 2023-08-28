@@ -16,11 +16,14 @@ class CheckLoggedIn
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        if(Auth::check()){
+    {    
+        if (Auth::check()) {
+            $user = $request->user();
+            if ($user->status === 1) {
+                return response("Account not activated, Please contact your admin", 403);
+            }
             return $next($request);
         }
-        
         return redirect()->route('login');
     }
 }

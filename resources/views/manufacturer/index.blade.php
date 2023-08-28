@@ -3,14 +3,12 @@
 @section('content')
     <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Manufacturers</h1>
+        <div class="mt-5">
+            <a href="{{ route('manufacturer.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New manufacturer</a>
+        </div>
         <div class="relative mt-3">
             <table id="activatedTable" class="w-full text-sm text-left">
                 <thead>
-                    <tr>
-                        <th class="py-5 px-2 pt-5">
-                            <a href="{{ route('manufacturer.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New manufacturer</a>
-                        </th>
-                    </tr>
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             Name
