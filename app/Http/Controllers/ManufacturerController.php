@@ -86,4 +86,27 @@ class ManufacturerController extends Controller
         ->with('success', ucwords($request->manufacturer_name).' has been updated successfully.');
     }
 
+    public function autocomplete(Request $request){
+        if($request->get('query')) {
+            $query = $request->get('query');
+            $output = '';
+            $data = Manufacturer::where('manufacturer_name' ,'LIKE', "%{$query}%")
+                ->where('manufacturer_status', 0)
+                ->limit(10)
+                ->get();
+            if(count($data) > 0) {
+                $output .= '<ul class="max-w-full sm:w-[24rem] divide-y bg-gray-700 divide-gray-600 border p-3 text-gray-700 dark:text-gray-400 rounded-lg shadow absolute z-1">';
+                    foreach ($data as $row) {
+                        $output .= '<li onclick="fill_manufacturer(\''.$row->id .'\' , \''.$row->manufacturer_name.'\')" class="hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white p-1">' .$row->manufacturer_name .'</li>';
+                    }
+                $output .=  '</ul>';
+            } else {
+                $output .= '<ul class="max-w-full sm:w-[24rem] divide-y bg-gray-700 divide-gray-600 border p-3 text-gray-700 dark:text-gray-400 rounded-lg shadow absolute z-1">';
+                $output .= '<li class="p-1">No Item found . <br> This manufacturer will be added in database</li>';
+                $output .= '</ul>';
+            }
+            return $output;
+            return view('product.add_new_inventory');
+        }
+    }
 }

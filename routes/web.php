@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
 Route::resource('/preference', PreferenceController::class)->middleware(['checkLoggedIn', 'role:0']); // preference
 Route::resource('/dashboard', DashboardController::class)->middleware('checkLoggedIn');
 
@@ -65,6 +68,7 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::patch('/update/{id}', [AreaController::class, 'update'])->name('area.update');
         Route::post('/deactivate/{id}', [AreaController::class, 'deactivate'])->name('area.deactivate');
         Route::post('/reactivate/{id}', [AreaController::class, 'reactivate'])->name('area.reactivate');
+        Route::post('/autocomplete', [AreaController::class, 'autocomplete'])->name('area.autocomplete');
     });
 });
 
@@ -77,8 +81,24 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::patch('/update/{id}', [ManufacturerController::class, 'update'])->name('manufacturer.update');
         Route::post('/deactivate/{id}', [ManufacturerController::class, 'deactivate'])->name('manufacturer.deactivate');
         Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');
+        Route::post('/autocomplete', [ManufacturerController::class, 'autocomplete'])->name('manufacturer.autocomplete');
     });
 });
 
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('/add_inventory', [ProductController::class, 'add_inventory'])->name('product.add_inventory');
+        Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
+        Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
+        Route::post('/store', [ProductController::class, 'store'])->name('product.store');
+        // Route::post('/store', [ProductController::class, 'store'])->name('manufacturer.store');
+        // Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('manufacturer.edit');
+        // Route::patch('/update/{id}', [ProductController::class, 'update'])->name('manufacturer.update');
+    });
+});
 
-
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'label'], function () {
+        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
+    });
+});
