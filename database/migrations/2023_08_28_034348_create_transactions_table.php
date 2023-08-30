@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('tran_serial')->nullable();
             $table->string('tran_comment')->nullable();
             $table->string('tran_action')->nullable();
+            $table->string('location_id')->nullable();
             $table->smallInteger('user_id');
             $table->timestamps();
         });

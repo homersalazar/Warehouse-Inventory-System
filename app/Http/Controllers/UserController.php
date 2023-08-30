@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function index(){
+
+        
         // $user_activated = User::where('status', 0)->with('location')->get();
         $user_activated = User::where('status', 0)->get();
         $user_deactivated = User::where('status', 1)->get();

@@ -17,13 +17,12 @@
     </div>
     <script>
         $(document).mouseup(function(e){
-            var container = $("#productList");
-            if (!container.is(e.target) && container.has(e.target).length === 0){
-                container.hide();
-                $("#product_name").val('');
+            var product = $("#productList");
+            if (!product.is(e.target) && product.has(e.target).length === 0){
+                product.hide();
             }
         });
-
+        // autocomplete product
         $(document).ready(function(){
             $('#product_name').keyup(function(){
                 var query = $(this).val();

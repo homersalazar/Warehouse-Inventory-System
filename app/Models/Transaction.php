@@ -18,6 +18,17 @@ class Transaction extends Model
         'tran_serial',
         'tran_comment',
         'tran_action',
+        'location_id',
         'user_id'
     ];
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function product()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

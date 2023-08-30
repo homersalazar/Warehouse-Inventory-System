@@ -7,8 +7,10 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,9 +93,13 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
         Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
         Route::post('/store', [ProductController::class, 'store'])->name('product.store');
-        // Route::post('/store', [ProductController::class, 'store'])->name('manufacturer.store');
-        // Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('manufacturer.edit');
-        // Route::patch('/update/{id}', [ProductController::class, 'update'])->name('manufacturer.update');
+    });
+});
+
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'transaction'], function () {
+        Route::get('/edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit');
+        Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
     });
 });
 

@@ -13,4 +13,9 @@ class Manufacturer extends Model
         'manufacturer_name',
         'manufacturer_status'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

@@ -21,4 +21,9 @@ class Location extends Model
     {
         return $this->hasMany(User::class, 'location_id');
     }
+
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

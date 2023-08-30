@@ -18,4 +18,14 @@ class Product extends Model
         'manufacturer_id',
         'pref_id'
     ];
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(Manufacturer::class);
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

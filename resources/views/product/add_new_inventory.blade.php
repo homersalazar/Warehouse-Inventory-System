@@ -7,6 +7,17 @@
             {{ csrf_field() }}
             <div class="block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow mt-5">
                 <div class="flex flex-col gap-5 sm:ml-20">
+                    @if (session('role') == 0)
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <label class="sm:w-[10rem] sm:text-right">Location</label>                    
+                            <select name="loc_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" required>
+                                <option selected>Choose a Location Site</option>
+                                @foreach ($location as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">Name</label>                    
                         <input type="text" name="prod_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" required>    
@@ -16,7 +27,7 @@
                         <input type="text" name="prod_sku" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" readonly placeholder="auto generated">    
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <label class="sm:w-[10rem] sm:text-right">UPC</label>                    
+                        <label class="sm:w-[10rem] sm:text-right">Part Number</label>                    
                         <input type="text" name="prod_upc" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">

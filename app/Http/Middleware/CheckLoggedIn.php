@@ -19,7 +19,7 @@ class CheckLoggedIn
     {    
         if (Auth::check()) {
             $user = $request->user();
-            if ($user->status === 1) {
+            if ($user->status == 1) {
                 return response("Account not activated, Please contact your admin", 403);
             }
             return $next($request);
