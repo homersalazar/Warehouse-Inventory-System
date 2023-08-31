@@ -62,6 +62,12 @@ Route::middleware('checkLoggedIn')->group(function() {
 });
 
 Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'label'], function () {
+        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
+    });
+});
+
+Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'area'], function () {
         Route::get('/', [AreaController::class, 'index'])->name('area.index');
         Route::match(['get', 'post'], '/create', [AreaController::class, 'create'])->name('area.create');
@@ -98,13 +104,8 @@ Route::middleware('checkLoggedIn')->group(function() {
 
 Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'transaction'], function () {
-        Route::get('/edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit');
+        Route::match(['get', 'post'], '/edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit');
         Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
     });
 });
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'label'], function () {
-        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
-    });
-});

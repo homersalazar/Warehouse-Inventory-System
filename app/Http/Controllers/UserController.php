@@ -7,39 +7,47 @@ use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
-        
+        $user_activated = User::select('users.id', 'users.name', DB::raw('GROUP_CONCAT(locations.loc_name) AS locations'))
+        ->join('locations', DB::raw('FIND_IN_SET(locations.id, REPLACE(users.location_id, " ", ""))'), '<>', DB::raw('0'))
+        ->groupBy('users.id', 'users.name')
+        ->get();
+    
         // $user_activated = User::where('status', 0)->with('location')->get();
-        $user_activated = User::where('status', 0)->get();
         $user_deactivated = User::where('status', 1)->get();
-        $deactivated_count = User::where('status', '=', 1)->count();        
+        $deactivated_count = User::where('status', '=', 1)->count();
         return view('user.index', compact('user_activated', 'user_deactivated', 'deactivated_count'));
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $user = User::find($id);
         $locations = Location::all();
         return view('user.edit', compact('user', 'locations'));
     }
 
-    public function edit_password($id){
+    public function edit_password($id)
+    {
         $user = User::find($id);
         return view('user.update', compact('user'));
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $validated = $request->validate([
             'user_name' => 'required',
             'user_email' => 'required'
         ]);
-        
+
         if ($validated) {
             $selectedSite = [];
-            foreach($request->input('loc_id') as $selected) {
+            foreach ($request->input('loc_id') as $selected) {
                 $selectedSite[] = $selected;
             }
             $user = User::findOrFail($id);
@@ -54,12 +62,13 @@ class UserController extends Controller
         }
     }
 
-    public function update_password(Request $request, $id){
+    public function update_password(Request $request, $id)
+    {
         $request->validate([
             'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required', 
+            'password_confirmation' => 'required',
         ]);
-        
+
         try {
             $user = User::findOrFail($id);
             $user->password = bcrypt($request->input('password'));
@@ -70,12 +79,13 @@ class UserController extends Controller
         }
     }
 
-    public function profile_update(Request $request, $id){
+    public function profile_update(Request $request, $id)
+    {
         $request->validate([
             'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required', 
+            'password_confirmation' => 'required',
         ]);
-        
+
         try {
             $user = User::findOrFail($id);
             $user->password = bcrypt($request->input('password'));
@@ -92,7 +102,7 @@ class UserController extends Controller
         $user->status = 1;
         $user->save();
         return redirect()->route('user.index')
-        ->with('success', ucwords($request->name).' has been updated successfully.');
+            ->with('success', ucwords($request->name) . ' has been updated successfully.');
     }
 
     public function reactivate(Request $request, $id)
@@ -101,30 +111,34 @@ class UserController extends Controller
         $user->status = 0;
         $user->save();
         return redirect()->route('user.index')
-        ->with('success', ucwords($request->name).' has been updated successfully.');
+            ->with('success', ucwords($request->name) . ' has been updated successfully.');
     }
 
-    public function profile($id){
+    public function profile($id)
+    {
         $user = User::find($id);
         return view('user.profile', compact('user'));
     }
 
-    public function show_login(){
+    public function show_login()
+    {
         return view('user.login');
     }
 
-    public function show_register(){
+    public function show_register()
+    {
         return view('user.register');
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $request->validate([
             'fullname' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required', 
+            'password_confirmation' => 'required',
         ]);
-    
+
         User::firstOrCreate([
             'name' => $request->input('fullname'),
             'email' => $request->input('email'),
@@ -132,11 +146,12 @@ class UserController extends Controller
             'role' => 1, // 0 - admin , 1 - user
             'status' => 1 // 0 - accepted , 1 - for approval
         ]);
-        
+
         return redirect()->route('user.login')->with('success', 'You have signed up successfully. Please log in.');
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required',
             'password' => 'required',
@@ -151,17 +166,18 @@ class UserController extends Controller
             session(['email' => $user->email]);
             if ($user->status == 0) {
                 return redirect()->route('dashboard.index')->with('success', 'Signed in');
-            }else {
+            } else {
                 Auth::logout();
                 return redirect("login")->with('error', 'You do not have access to the dashboard');
             }
         }
-        
+
         return redirect("login")->with('error', 'Login details are not valid');
     }
 
 
-    public function logout() {
+    public function logout()
+    {
         Session::flush();
         Auth::logout();
         return Redirect('/');
