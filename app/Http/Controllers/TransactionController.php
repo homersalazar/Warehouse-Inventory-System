@@ -10,32 +10,43 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function recievedValue(Request $request)
+    public function edit($id, $loc_id)
     {
-        $loc_id = $request->input('loc_id');
-        $prod_sku = $request->input('prod_sku');
-        return redirect()->route('transaction.edit', ['id' => $prod_sku, 'loc_id' => $loc_id]);
-
-    }
-
-    public function edit(Request $request, $id){
         $user = Auth::user();
-        if($user->role == 1){
-            $product = Product::find($id);
-            $transactionAdd = Transaction::where('location_id', $user->location->id)
-            ->where('product_id', $product->prod_sku)
-            ->where('tran_action', 0)
-            ->sum('tran_quantity');
-            $transactionRemove = Transaction::where('location_id', $user->location->id)
-            ->where('product_id', $product->prod_sku)
-            ->where('tran_action', 1)
-            ->sum('tran_quantity');
-            $total_stock = $transactionAdd - $transactionRemove;
-            $total = $total_stock <= 0 ? 0 : $total_stock;
-            return view('transaction.edit', compact('product', 'user', 'total'));  
-        }
+        $product = Product::find($id);
+        $location = Location::find($loc_id);
+        $location_name = Location::all();
+        $transactionAdd = Transaction::where('location_id', $loc_id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 0)
+        ->sum('tran_quantity');
+        $transactionRemove = Transaction::where('location_id', $loc_id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 1)
+        ->sum('tran_quantity');
+        $total_stock = $transactionAdd - $transactionRemove;
+        $total = $total_stock <= 0 ? 0 : $total_stock;
+        return view('transaction.edit', compact('product', 'user', 'total', 'location' , 'location_name'));    
+        
     }
 
+    public function show($id)
+    {
+        $user = Auth::user();
+        $product = Product::find($id);
+        $transactionAdd = Transaction::where('location_id', $user->location->id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 0)
+        ->sum('tran_quantity');
+        $transactionRemove = Transaction::where('location_id', $user->location->id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 1)
+        ->sum('tran_quantity');
+        $total_stock = $transactionAdd - $transactionRemove;
+        $total = $total_stock <= 0 ? 0 : $total_stock;
+        return view('transaction.edit', compact('product', 'user', 'total'));  
+    }
+    
     public function store(Request $request){
         $request->validate([
             'tran_quantity' => 'required'

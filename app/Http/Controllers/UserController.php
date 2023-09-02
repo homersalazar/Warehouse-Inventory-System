@@ -13,9 +13,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user_activated = User::select('users.id', 'users.name', DB::raw('GROUP_CONCAT(locations.loc_name) AS locations'))
+        $user_activated = User::select('users.id', 'users.name', 'users.email' , 'users.role', 'users.status', DB::raw('GROUP_CONCAT(locations.loc_name) AS locations'))
         ->join('locations', DB::raw('FIND_IN_SET(locations.id, REPLACE(users.location_id, " ", ""))'), '<>', DB::raw('0'))
-        ->groupBy('users.id', 'users.name')
+        ->groupBy('users.id', 'users.name', 'users.email', 'users.role', 'users.status')
         ->get();
 
     

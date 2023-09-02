@@ -39,7 +39,7 @@
                 </a>
                 <div class="flex items-center md:order-2">
                     @if (session('role') == 0)
-                        <select name="universal_location" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
+                        <select onchange="universal_location()" name="universal_location" id="universal_location" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
                             @foreach ($locations as $loc)
                                 <option class="text-gray-400 bg-gray-700 px-2" value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
                             @endforeach
@@ -129,7 +129,15 @@
             </div>
         </nav>
     @endauth
-    @yield('content')
+    @yield('content')    
+    <script>
+        let selectedLocation = '';
+
+            const universal_location = () => {
+                loc_id = document.getElementById('universal_location').value;
+            }
+            universal_location();
+    </script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
     {{-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script> --}}
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>

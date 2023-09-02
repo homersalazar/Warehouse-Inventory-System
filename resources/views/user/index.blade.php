@@ -47,8 +47,8 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-
-                                {{  $user->locations; }}
+                                {{-- {{  $user->locations }} --}}
+                                {{  $user->role == 0 ? "All Location" : $user->locations }}
                             </td>
                             <td class="px-6">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">

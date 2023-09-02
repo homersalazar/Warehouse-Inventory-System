@@ -22,24 +22,64 @@
                 product.hide();
             }
         });
-        // autocomplete product
-        $(document).ready(function(){
-            $('#product_name').keyup(function(){
-                var query = $(this).val();
-                if(query != ''){
-                    var _token = $('input[name="_token"]').val();
-                    $.ajax({
-                        url:"{{ route('product.product_autocomplete') }}",
-                        method:"POST",
-                        data:{query:query , _token:_token},
-                        success:function(data){
-                            $('#productList').fadeIn();
-                            $('#productList').html(data);
-                        }
-                    });
-                }
+        var role = {{ json_encode(session('role')) }};
+
+        if(role == 0){
+            $(document).ready(function(){
+                $('#product_name').keyup(function(){
+                    var query = $(this).val();
+                    if(query != ''){
+                        var _token = $('input[name="_token"]').val();
+                        $.ajax({
+                            url:"{{ route('product.product_autocomplete') }}",
+                            method:"POST",
+                            data:{
+                                query:query ,
+                                loc_id, loc_id, 
+                                _token:_token},
+                            success:function(data){
+                                $('#productList').fadeIn();
+                                $('#productList').html(data);
+                            }
+                        });
+                    }
+                });
             });
-        });
+        }
+        
+        $(document).ready(function(){
+                $('#product_name').keyup(function(){
+                    var query = $(this).val();
+                    if(query != ''){
+                        var _token = $('input[name="_token"]').val();
+                        $.ajax({
+                            url:"{{ route('product.product_autocomplete') }}",
+                            method:"POST",
+                            data:{
+                                query:query ,
+                                _token:_token},
+                            success:function(data){
+                                $('#productList').fadeIn();
+                                $('#productList').html(data);
+                            }
+                        });
+                    }
+                });
+            });
     </script>
 @endsection
 
+{{-- // $.ajax({
+    //     url: `{{ route('transaction.edit')/${sku_id} }}`,
+    //     type: "POST",
+    //     data: {
+    //         loc_id: loc_id,
+    //         _token: '{{ csrf_token() }}', // Include CSRF token if needed
+    //     },
+    //     success: function (data) {
+    //         // Handle success response if needed
+    //     },
+    //     error: function (xhr, textStatus, errorThrown) {
+    //         // Handle error response if needed
+    //     }
+    // }); --}}

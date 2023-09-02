@@ -14,18 +14,6 @@
         @endif
         <form method="POST" action="{{ route('transaction.store') }}">
             @csrf
-            @if (session('role') == 0)
-                <div class="flex flex-col sm:flex-row gap-3 py-5">
-                    <label class="sm:w-[10rem] sm:text-right">Location</label>
-                    <select name="loc_id" id="loc_id"
-                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5"
-                        required>
-                        @foreach ($location_name as $loc)
-                            <option value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
             <div class="flex flex-col gap-5 mt-2">
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">Transaction Date</label>
@@ -81,7 +69,9 @@
                 <div class="flex flex-flex gap-3">
                     <input type="hidden" name="product_ids" id="product_ids" value="{{ $product->prod_sku }}">
                     @if (session('role') == 1)
-                        <input type="hidden" name="location_id" value="{{ $user->location->id }}">
+                        <input type="text" name="location_id" value="{{ $user->location->id }}">
+                    @else
+                        <input type="text" name="location_id" value="{{ $location->id }}">
                     @endif
                     <button type="submit"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>

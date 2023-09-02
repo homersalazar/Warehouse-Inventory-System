@@ -105,8 +105,8 @@ Route::middleware('checkLoggedIn')->group(function() {
 
 Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'transaction'], function () {
-        Route::get('/recievedValue', [TransactionController::class, 'recievedValue'])->name('transaction.recievedValue');
-        Route::match(['get', 'post'], '/edit/{id}', [TransactionController::class, 'edit'])->name('transaction.edit');
+        Route::get('/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
+        Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show');
         Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
     });
 });
