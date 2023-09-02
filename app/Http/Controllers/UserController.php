@@ -13,11 +13,11 @@ class UserController extends Controller
 {
     public function index()
     {
-
         $user_activated = User::select('users.id', 'users.name', DB::raw('GROUP_CONCAT(locations.loc_name) AS locations'))
         ->join('locations', DB::raw('FIND_IN_SET(locations.id, REPLACE(users.location_id, " ", ""))'), '<>', DB::raw('0'))
         ->groupBy('users.id', 'users.name')
         ->get();
+
     
         // $user_activated = User::where('status', 0)->with('location')->get();
         $user_deactivated = User::where('status', 1)->get();

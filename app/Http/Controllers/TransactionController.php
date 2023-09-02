@@ -10,36 +10,29 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+    public function recievedValue(Request $request)
+    {
+        $loc_id = $request->input('loc_id');
+        $prod_sku = $request->input('prod_sku');
+        return redirect()->route('transaction.edit', ['id' => $prod_sku, 'loc_id' => $loc_id]);
+
+    }
+
     public function edit(Request $request, $id){
-        $product = Product::find($id);
         $user = Auth::user();
         if($user->role == 1){
+            $product = Product::find($id);
             $transactionAdd = Transaction::where('location_id', $user->location->id)
             ->where('product_id', $product->prod_sku)
             ->where('tran_action', 0)
             ->sum('tran_quantity');
             $transactionRemove = Transaction::where('location_id', $user->location->id)
-            ->where('product_id', $product->product_sku)
+            ->where('product_id', $product->prod_sku)
             ->where('tran_action', 1)
             ->sum('tran_quantity');
             $total_stock = $transactionAdd - $transactionRemove;
             $total = $total_stock <= 0 ? 0 : $total_stock;
             return view('transaction.edit', compact('product', 'user', 'total'));  
-        }else{
-            $loc_id = $request->input('loc_id');
-            $location_name = Location::all();
-            $location = Location::find($loc_id);
-            $transactionAdd = Transaction::where('location_id', $location)
-                ->where('product_id', $product->prod_sku)
-                ->where('tran_action', 0)
-                ->sum('tran_quantity');
-            $transactionRemove = Transaction::where('location_id', $location)
-                ->where('product_id', $product->product_sku)
-                ->where('tran_action', 1)
-                ->sum('tran_quantity');
-            $total_stock = $transactionAdd - $transactionRemove;
-            $total = $total_stock <= 0 ? 0 : $total_stock;
-            return view('transaction.edit', compact('product', 'user', 'total', 'location_name'));
         }
     }
 

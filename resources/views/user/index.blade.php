@@ -32,6 +32,7 @@
                 </thead>
                 <tbody>
                     @foreach ($user_activated as $user)
+
                         <tr class="border-b">
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
                                 {{ ucwords($user->name) }}
@@ -46,6 +47,7 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+
                                 {{  $user->locations; }}
                             </td>
                             <td class="px-6">

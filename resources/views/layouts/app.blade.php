@@ -38,6 +38,13 @@
                     <img src="{{ asset('assets/logo.png') }}" class="h-12" alt="logo" class="text-white">
                 </a>
                 <div class="flex items-center md:order-2">
+                    @if (session('role') == 0)
+                        <select name="universal_location" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
+                            @foreach ($locations as $loc)
+                                <option class="text-gray-400 bg-gray-700 px-2" value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                     <button type="button" class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                         <span class="sr-only">Open user menu</span>
                         <i class="fa-solid text-white text-2xl fa-user-gear"></i>
