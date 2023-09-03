@@ -10,6 +10,60 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+    public function item($id, $loc_id)
+    {
+        $user = Auth::user();
+        $product = Product::find($id);
+        $locations = Location::all();
+        $transfer_local = Location::where('id', '!=', $loc_id)
+        ->get();
+        $transactions = Transaction::where('product_id', $id)->get();
+        $totals = [];
+
+        foreach ($locations as $location) {
+            $transactionAdd = Transaction::where('location_id', $location->id)
+                ->where('product_id', $product->prod_sku)
+                ->where('tran_action', 0)
+                ->sum('tran_quantity');
+            
+            $transactionRemove = Transaction::where('location_id', $location->id)
+                ->where('product_id', $product->prod_sku)
+                ->where('tran_action', 1)
+                ->sum('tran_quantity');
+            
+            $total_stock = $transactionAdd - $transactionRemove;
+            $total = $total_stock <= 0 ? 0 : $total_stock;
+            
+            // Store the total for this location in the $totals array
+            $totals[$location->id] = $total;
+        }
+
+        return view('transaction.item', compact('product', 'locations', 'totals', 'transactions', 'transfer_local'));
+
+    }
+
+    public function user_item($id)
+    {
+        $user = Auth::user();
+        $product = Product::find($id);
+        $location = Location::where('id', '!=', $user->location->id)->get();
+        $transactions = Transaction::where('user_id', $user->id)
+        ->where('product_id', $id)
+        ->get();
+        $transactionAdd = Transaction::where('location_id', $user->location->id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 0)
+        ->sum('tran_quantity');
+        $transactionRemove = Transaction::where('location_id', $user->location->id)
+        ->where('product_id', $product->prod_sku)
+        ->where('tran_action', 1)
+        ->sum('tran_quantity');
+        $total_stock = $transactionAdd - $transactionRemove;
+        $total = $total_stock <= 0 ? 0 : $total_stock;
+        return view('transaction.item', compact('product', 'user', 'total', 'location', 'transactions'));  
+
+    }
+
     public function edit($id, $loc_id)
     {
         $user = Auth::user();
@@ -26,7 +80,7 @@ class TransactionController extends Controller
         ->sum('tran_quantity');
         $total_stock = $transactionAdd - $transactionRemove;
         $total = $total_stock <= 0 ? 0 : $total_stock;
-        return view('transaction.edit', compact('product', 'user', 'total', 'location' , 'location_name'));    
+        return view('transaction.edit', compact('product', 'user', 'total', 'location' , 'location_name', 'loc_id'));    
         
     }
 
@@ -49,9 +103,9 @@ class TransactionController extends Controller
     
     public function store(Request $request){
         $request->validate([
-            'tran_quantity' => 'required'
+            'tran_quantity' => 'required|numeric'
         ]);
-        $transaction = Transaction::firstOrCreate([
+        $transaction = Transaction::updateOrCreate([
             'product_id' => $request->product_ids,
             'tran_date' => $request->tran_date,
             'tran_option' => $request->tran_option,
@@ -64,7 +118,15 @@ class TransactionController extends Controller
             'user_id' => auth()->user()->id
         ]);
         $transaction->save();
-        return redirect()->back()
-        ->with('success', 'Product added successfully.');
+        if(session('role') == 0){
+            return redirect()
+                ->route('transaction.item', ['id' => $request->product_ids, 'loc_id' => $request->location_id])
+                ->with('success', 'Quantity added successfully.');
+        }else{
+            return redirect()
+                ->route('transaction.user_item', ['id' => $request->product_ids])
+                ->with('success', 'Quantity added successfully.');
+        }
     }
+
 }

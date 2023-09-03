@@ -107,6 +107,8 @@ Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'transaction'], function () {
         Route::get('/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
         Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show');
+        Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
+        Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item');
         Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
     });
 });

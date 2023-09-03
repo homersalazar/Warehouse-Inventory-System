@@ -9,4 +9,9 @@ class Label extends Model
 {
     use HasFactory;
     protected $fillable = ['label_name'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

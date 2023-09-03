@@ -24,6 +24,16 @@ class Product extends Model
         return $this->belongsTo(Manufacturer::class);
     }
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function label()
+    {
+        return $this->belongsTo(Label::class);
+    }
+
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);

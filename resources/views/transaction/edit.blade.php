@@ -2,9 +2,15 @@
 
 @section('content')
     <div class="flex flex-col  pt-5 px-5 sm:ml-16">
-        <a href=""
-            class="text-left text-2xl sm:text-2xl font-bold underline hover:text-blue-700">{{ ucwords($product->prod_name) }}
-        </a>
+        @if (session('role') == 0)
+            <a href={{ route('transaction.item', ['id' => $product->prod_sku, 'loc_id' => $loc_id]) }}
+                class="text-left text-2xl sm:text-2xl font-bold underline hover:text-blue-700">{{ ucwords($product->prod_name) }}
+            </a>
+        @else
+            <a href={{ route('transaction.user_item', ['id' => $product->prod_sku]) }}
+                class="text-left text-2xl sm:text-2xl font-bold underline hover:text-blue-700">{{ ucwords($product->prod_name) }}
+            </a>
+        @endif
         <p class="py-2 font-semibold">(SKU0{{ $product->prod_sku }}
             )</p>
         @if (session('role') == 1)
@@ -69,9 +75,9 @@
                 <div class="flex flex-flex gap-3">
                     <input type="hidden" name="product_ids" id="product_ids" value="{{ $product->prod_sku }}">
                     @if (session('role') == 1)
-                        <input type="text" name="location_id" value="{{ $user->location->id }}">
+                        <input type="hidden" name="location_id" value="{{ $user->location->id }}">
                     @else
-                        <input type="text" name="location_id" value="{{ $location->id }}">
+                        <input type="hidden" name="location_id" value="{{ $location->id }}">
                     @endif
                     <button type="submit"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
