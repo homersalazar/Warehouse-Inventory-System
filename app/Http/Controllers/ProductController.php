@@ -13,7 +13,57 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
-{
+{   
+    public function edit($id)
+    {
+        $product = Product::find($id);
+        return view('product.edit', compact('product'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'prod_name' => 'required|unique:products,prod_name',
+        ]);
+
+        if (empty($request->label_id) && !empty($request->label_name)) {
+            $label = Label::updateOrCreate([
+                'label_name' => ucwords($request->label_name)
+            ]);
+            $label->save();
+            $labels_id = $label->id;
+        }
+        if (empty($request->area_id) && !empty($request->area_name)) {
+            $area = Area::updateOrCreate([
+                'area_name' => ucwords($request->area_name),
+                'area_status' => 0,
+            ]);
+            $area->save();
+            $areas_id = $area->id;
+        }
+
+        if (empty($request->manufacturer_id) && !empty($request->manufacturer_name)) {
+            $manufacturer = Manufacturer::updateOrCreate([
+                'manufacturer_name' => ucwords($request->manufacturer_name),
+                'manufacturer_status' => 0,
+            ]);
+            $manufacturer->save();
+            $manufacturers_id = $manufacturer->id;
+        }
+        $product = Product::updateOrInsert(
+        ['id' => $id],
+        [
+            'prod_name' => $request->prod_name,
+            'prod_upc' => $request->prod_upc,
+            'prod_summary' => $request->prod_summary,
+            'label_id' => $request->label_id != '' ?  $request->label_id : $labels_id,
+            'area_id' => $request->area_id != '' ?  $request->area_id : $areas_id,
+            'manufacturer_id' => $request->manufacturer_id != '' ?  $request->manufacturer_id : $manufacturers_id,
+        ]);
+        return redirect()->route('product.add_inventory')
+        ->with('success', 'Product updated successfully.');
+    }
+
     public function add_inventory(){
         return view('product.add_inventory');
     }
@@ -29,14 +79,14 @@ class ProductController extends Controller
             'tran_quantity' => 'required'
         ]);
 
-        if($request->label_id == '' && $request->label_name != ''){
+        if (empty($request->label_id) && !empty($request->label_name)) {
             $label = Label::updateOrCreate([
                 'label_name' => ucwords($request->label_name)
             ]);
             $label->save();
             $labels_id = $label->id;
         }
-        if($request->area_id == '' && $request->area_name != ''){
+        if (empty($request->area_id) && !empty($request->area_name)) {
             $area = Area::updateOrCreate([
                 'area_name' => ucwords($request->area_name),
                 'area_status' => 0,
@@ -44,7 +94,7 @@ class ProductController extends Controller
             $area->save();
             $areas_id = $area->id;
         }
-        if($request->manufacturer_id == '' && $request->manufacturer_name != ''){
+        if (empty($request->manufacturer_id) && !empty($request->manufacturer_name)) {
             $manufacturer = Manufacturer::updateOrCreate([
                 'manufacturer_name' => ucwords($request->manufacturer_name),
                 'manufacturer_status' => 0,
@@ -52,7 +102,7 @@ class ProductController extends Controller
             $manufacturer->save();
             $manufacturers_id = $manufacturer->id;
         }
-        $pref = Preference::where('id', 1)->first();
+        $pref = Preference::whereId(1)->first();
         $min = '';
         if($request->pref_id == 0){
             $min = $pref->pref_value;

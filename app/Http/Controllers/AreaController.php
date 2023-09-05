@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 class AreaController extends Controller
 {
     public function index(){
-        $activated_area = Area::where('area_status', '=' , 0)->get();        
-        $deactivated_area = Area::where('area_status', '=' , 1)->get();
-        $deactivated_count = Area::where('area_status', '=', 1)->count();        
+        $activated_area = Area::whereArea_status(0)->get();
+        $deactivated_area = Area::whereArea_status(1)->get();
+        $deactivated_count = Area::whereArea_status(1)->count();
         return view('area.index', compact('activated_area', 'deactivated_area', 'deactivated_count'));    
     }
 

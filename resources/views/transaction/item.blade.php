@@ -7,72 +7,64 @@
                 <h1 class="text-xl font-bold">{{ ucwords($product->prod_name) }} <span class="text-lg">(SKU0{{ $product->prod_sku }})</span></h1>
             </div>
             <div class="flex flex-row sm:justify-center gap-2">
-                <a href="" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><i class="fa-solid fa-pen"></i> Edit</a>
-                <a href="" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-plus"></i> Add</a>
-                <a href="" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-minus"></i> Remove</a>
+                @if (session('role') == 0)
+                    <a href="/product/edit/{{ $product->prod_sku }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><i class="fa-solid fa-pen"></i> Edit</a>
+                    <a href="/transaction/edit/{{ $product->prod_sku }}/loc_id/{{ $loc_id }}" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-plus"></i> Stock In</a>
+                @else
+                    <a href="/transaction/show/{{ $product->prod_sku }}" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><i class="fa-solid fa-plus"></i> Stock In</a>
+                @endif
+                <a href="" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"><i class="fa-solid fa-minus"></i> Stock Out</a>
             </div>
         </div>
         <div class="block mt-5 max-w-full p-6 border border-gray-200 shadow text-white bg-gray-800 border-gray-700">
             <ul class="flex flex-col gap-5 sm:flex-row mb-5">
-                @if (session('role') == 0)
-                    @foreach ($locations as $location)
-                        <li>{{ $location->loc_name }} <span class="bg-blue-600 p-1 rounded-lg font-semibold">Stock: {{ $totals[$location->id] }}</span></li>
-                    @endforeach 
-                @else
-                    <div>{{ $user->location->loc_name }} <span class="bg-blue-600 p-1 rounded-lg font-semibold">Stock: {{ $total }}</span></div>
-                @endif
+                @foreach ($locations as $location)
+                    <li>{{ $location->loc_name }} <span class="bg-blue-600 p-1 rounded-lg font-semibold">Stock: {{ $totals[$location->id] }}</span></li>
+                @endforeach 
             </ul>
-            <button type="button" id="transferBtn" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900 mt-5"><i class="fa-solid fa-right-left"></i> Transfer Inventory</button>
-            <div id="transfer_form" class="hidden">
-                <form action="" method="post">
-                    <div class="flex flex-col gap-5 mt-10">
-                        @if (session('role') == 1)
-                            <h1 class="text-xl">Transfer stock from {{ $user->location->loc_name }}</h1>
-                        @else
-                            
-                        @endif
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Transaction Date</label>
-                            <input type="date" name="tran_date" value="{{ date('Y-m-d') }}"
-                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5"
-                                required>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Quantity</label>
-                            <input type="number" name="tran_quantity" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" required>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">To</label>
-                            @if (session('role') == 1)
-                                <select id="" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
-                                    @foreach ($location as $loc)
-                                        <option value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
-                                    @endforeach
-                                </select>
-                            @else
+            @if (session('role') == 0)
+                <button type="button" id="transferBtn" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900 mt-5"><i class="fa-solid fa-right-left"></i> Transfer Inventory</button>
+                <div id="transfer_form" class="hidden">
+                    <form action="" method="post">
+                        <div class="flex flex-col gap-5 mt-10">
+                            <h1 class="text-xl">Transfer stock from 
+                                {{ $current_location->loc_name }}
+                            </h1>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <label class="sm:w-[10rem] sm:text-right">Transaction Date</label>
+                                <input type="date" name="tran_date" value="{{ date('Y-m-d') }}"
+                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5"
+                                    required>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <label class="sm:w-[10rem] sm:text-right">Quantity</label>
+                                <input type="number" name="tran_quantity" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" required>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <label class="sm:w-[10rem] sm:text-right">To</label>
                                 <select id="" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                                     @foreach ($transfer_local as $loc)
                                         <option value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
                                     @endforeach
-                                </select>
-                            @endif
+                                </select>   
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <label class="sm:w-[10rem] sm:text-right">Serial Number</label>
+                                <input type="text" name="tran_serial" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <label class="sm:w-[10rem] sm:text-right">Comments</label>
+                                <input type="text" name="tran_comment"
+                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                            </div>
+                            <div class="flex flex-flex gap-3">
+                                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
+                                <button type="button" id="cancelBtn" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
+                            </div>
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Serial Number</label>
-                            <input type="text" name="tran_serial" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Comments</label>
-                            <input type="text" name="tran_comment"
-                                class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
-                        </div>
-                        <div class="flex flex-flex gap-3">
-                            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
-                            <button type="button" id="cancelBtn" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
+            @endif
             <div class="flex flex-col gap-2 mt-5 mb-5 sm:ml-5">
                 <label class="font-bold">Average Cost (₱)</label>
                     0
@@ -174,7 +166,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                {{ $row->tran_quantity *  $row->tran_unit }}
+                                {{ number_format($row->tran_quantity *  $row->tran_unit,2) }}
                             </td>
                             <td class="px-6 py-4">
                                 @if ($row->tran_action == 0)
@@ -186,7 +178,11 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">
-                                <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-2 focus:ring-blue-300 font-medium rounded-lg text-sm p-1"><i class="fa-solid fa-pen"></i></button>
+                                @if (session('role') == 0)
+                                    <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-2 focus:ring-blue-300 font-medium rounded-lg text-sm p-1"><i class="fa-solid fa-pen"></i></button>
+                                @elseif (session('role') == 1 && session('id') == $row->user_id)
+                                    <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-2 focus:ring-blue-300 font-medium rounded-lg text-sm p-1"><i class="fa-solid fa-pen"></i></button>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -198,15 +194,16 @@
         const transferBtn = document.getElementById('transferBtn');
         const transfer_form = document.getElementById('transfer_form');
         const cancelBtn = document.getElementById('cancelBtn');
-        transferBtn.addEventListener("click", function() {
-            transferBtn.classList.add("hidden");
-            transfer_form.classList.remove("hidden");
-        });
-        cancelBtn.addEventListener("click", function() {
-            transferBtn.classList.remove("hidden");
-            transfer_form.classList.add("hidden");
-        });
-
+        if({{ session('role') }} == 0){
+            transferBtn.addEventListener("click", function() {
+                transferBtn.classList.add("hidden");
+                transfer_form.classList.remove("hidden");
+            });
+            cancelBtn.addEventListener("click", function() {
+                transferBtn.classList.remove("hidden");
+                transfer_form.classList.add("hidden");
+            });
+        }
         const moreBtn = document.getElementById('moreBtn');
         const infoDiv = document.getElementById('infoDiv');
         const lessBtn = document.getElementById('lessBtn');

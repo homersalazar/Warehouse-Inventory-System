@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 class ManufacturerController extends Controller
 {
     public function index(){
-        $activated_manufacturer = Manufacturer::where('manufacturer_status', '=' , 0)->get();        
-        $deactivated_manufacturer = Manufacturer::where('manufacturer_status', '=' , 1)->get();
-        $deactivated_count = Manufacturer::where('manufacturer_status', '=', 1)->count();        
+        $activated_manufacturer = Manufacturer::whereManufacturer_status(0)->get();        
+        $deactivated_manufacturer = Manufacturer::whereManufacturer_status(1)->get();
+        $deactivated_count = Manufacturer::whereManufacturer_status(1)->count();        
         return view('manufacturer.index', compact('activated_manufacturer', 'deactivated_manufacturer', 'deactivated_count'));    
     }
 

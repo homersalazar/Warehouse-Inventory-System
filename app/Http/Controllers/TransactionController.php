@@ -14,12 +14,14 @@ class TransactionController extends Controller
     {
         $user = Auth::user();
         $product = Product::find($id);
-        $locations = Location::all();
-        $transfer_local = Location::where('id', '!=', $loc_id)
-        ->get();
         $transactions = Transaction::where('product_id', $id)->get();
-        $totals = [];
 
+        //for transfer form
+        $transfer_local = Location::where('id', '!=', $loc_id)->get();
+        $current_location = Location::find($loc_id);
+
+        $locations = Location::all();
+        $totals = [];
         foreach ($locations as $location) {
             $transactionAdd = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
@@ -38,7 +40,7 @@ class TransactionController extends Controller
             $totals[$location->id] = $total;
         }
 
-        return view('transaction.item', compact('product', 'locations', 'totals', 'transactions', 'transfer_local'));
+        return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id'));
 
     }
 
@@ -50,17 +52,26 @@ class TransactionController extends Controller
         $transactions = Transaction::where('user_id', $user->id)
         ->where('product_id', $id)
         ->get();
-        $transactionAdd = Transaction::where('location_id', $user->location->id)
-        ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 0)
-        ->sum('tran_quantity');
-        $transactionRemove = Transaction::where('location_id', $user->location->id)
-        ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 1)
-        ->sum('tran_quantity');
-        $total_stock = $transactionAdd - $transactionRemove;
-        $total = $total_stock <= 0 ? 0 : $total_stock;
-        return view('transaction.item', compact('product', 'user', 'total', 'location', 'transactions'));  
+        $totals = [];
+        $locations = Location::all();
+        foreach ($locations as $location) {
+            $transactionAdd = Transaction::where('location_id', $location->id)
+                ->where('product_id', $product->prod_sku)
+                ->where('tran_action', 0)
+                ->sum('tran_quantity');
+            
+            $transactionRemove = Transaction::where('location_id', $location->id)
+                ->where('product_id', $product->prod_sku)
+                ->where('tran_action', 1)
+                ->sum('tran_quantity');
+            
+            $total_stock = $transactionAdd - $transactionRemove;
+            $total = $total_stock <= 0 ? 0 : $total_stock;
+            
+            // Store the total for this location in the $totals array
+            $totals[$location->id] = $total;
+        }
+        return view('transaction.item', compact('product', 'user', 'totals', 'locations', 'transactions'));  
 
     }
 
