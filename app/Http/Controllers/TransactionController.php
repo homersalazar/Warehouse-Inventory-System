@@ -61,7 +61,6 @@ class TransactionController extends Controller
             $transactionAdd = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
                 ->whereIn('tran_action',  [0, 2])
-                // ->Where('tran_action', 2)
                 ->sum('tran_quantity');
             
             $transactionRemove = Transaction::where('location_id', $location->id)
@@ -103,11 +102,11 @@ class TransactionController extends Controller
         $location_name = Location::all();
         $transactionAdd = Transaction::where('location_id', $loc_id)
         ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 0)
+        ->whereIn('tran_action',  [0, 2])
         ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $loc_id)
         ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 1)
+        ->whereIn('tran_action',  [1, 3])
         ->sum('tran_quantity');
         $total_stock = $transactionAdd - $transactionRemove;
         $total = $total_stock <= 0 ? 0 : $total_stock;
@@ -121,11 +120,11 @@ class TransactionController extends Controller
         $product = Product::find($id);
         $transactionAdd = Transaction::where('location_id', $user->location->id)
         ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 0)
+        ->whereIn('tran_action',  [0, 2])
         ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $user->location->id)
         ->where('product_id', $product->prod_sku)
-        ->where('tran_action', 1)
+        ->whereIn('tran_action',  [1, 3])
         ->sum('tran_quantity');
         $total_stock = $transactionAdd - $transactionRemove;
         $total = $total_stock <= 0 ? 0 : $total_stock;
@@ -219,6 +218,24 @@ class TransactionController extends Controller
         $tranfer_item->delete();
         return redirect()->back()
         ->with('success', 'Transfer added successfully.');
-    }
+    } 
 
+    public function update(Request $request, $id)
+    {   
+        $request->validate([
+            'tran_quantity' => 'required|numeric'
+        ]);       
+        $updateTransaction = Transaction::find($id);
+        
+        if (!$updateTransaction) {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
+        $updateTransaction->tran_date = $request->tran_date;
+        $updateTransaction->tran_drno = $request->tran_drno;
+        $updateTransaction->tran_mpr = $request->tran_mpr;
+        $updateTransaction->tran_quantity = $request->tran_quantity;
+        $updateTransaction->save();
+        
+        return redirect()->back()->with('success', 'Transaction updated successfully.');
+    }
 }

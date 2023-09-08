@@ -1,10 +1,7 @@
 @extends('layouts.app')
-<style>
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-</style>
+
 @section('content')
+@include('transaction.edit_modal')
     <div class="flex flex-col pt-5">
         <div class="grid grid-cols-1 sm:grid-cols-2 px-5 gap-5">
             <div class="sm:ml-16">
@@ -225,7 +222,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-row">
                                     @if ($row->user_id == session('ID') || session('role') == 0)
-                                        <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
+                                        <button data-modal-target="edit_transaction" onclick="edit_transaction('{{ $row->id }}', '{{ $row->tran_date }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}' , '{{ $row->tran_quantity }}')" type="button" class="{{ $row->tran_action == 2 || $row->tran_action == 3 ? 'hidden' : '' }} py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                     @endif
@@ -358,6 +355,42 @@
             lessBtn.classList.add("hidden");
         });
 
+    const edit_transaction = (tran_id, tran_date, tran_drno, tran_mpr, tran_quantity) => {
+        const modal = document.getElementById("edit_transaction");
+        modal.style.display = "block";
+
+        // Populate the form fields
+        $("#tran_id").val(tran_id);
+        $("#tran_date").val(tran_date);
+        $("#tran_drno").val(tran_drno);
+        $("#tran_mpr").val(tran_mpr);
+        $("#tran_quantity").val(tran_quantity);
+
+        // Submit the form data via AJAX
+        $("#edit_form").off("submit").on("submit", function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize(); // Serialize the form data
+
+            $.ajax({
+                url: `/transaction/update/${tran_id}`,
+                type: "POST", // Use POST to update the resource
+                data: formData,
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                },
+            });
+        });
+    };
+
+
+
+        const closeModal = () => {
+            const modal = document.getElementById("edit_transaction");
+            modal.style.display = "none";
+        }
 
         const received_item = (transfer_id, prod_name) => {
             var proceed = confirm(`This action will proceed this transfer ${prod_name}.  Are you sure?`);
@@ -392,8 +425,8 @@
                     },
                 ],
                 lengthChange: false,
-                info: false,
-                searching: false
+                info: false
+                // searching: false
             });
 
             $('#pendingTable').DataTable({
