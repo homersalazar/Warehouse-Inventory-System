@@ -26,4 +26,14 @@ class Location extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function pendingFrom()
+    {
+        return $this->hasMany(Pending::class, 'tran_from');
+    }
+
+    public function pendingTo()
+    {
+        return $this->hasMany(Pending::class, 'location_id');
+    }
 }

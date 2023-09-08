@@ -13,18 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('pendings', function (Blueprint $table) {
             $table->id();
             $table->smallInteger('product_id');
             $table->date('tran_date');
-            $table->string('tran_option')->nullable();
             $table->integer('tran_quantity');
-            $table->string('tran_unit')->nullable();
             $table->string('tran_serial')->nullable();
             $table->string('tran_comment')->nullable();
             $table->string('tran_action')->nullable();
             $table->string('tran_drno')->nullable();
             $table->string('tran_mpr')->nullable();
+            $table->string('tran_from')->nullable();
             $table->string('location_id')->nullable();
             $table->smallInteger('user_id');
             $table->timestamps();
@@ -38,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('pendings');
     }
 };

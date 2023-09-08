@@ -161,18 +161,18 @@ class UserController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             session(['role' => $user->role]);
-            session(['id' => $user->id]);
+            session(['ID' => $user->id]);
             session(['full_name' => $user->name]);
             session(['email' => $user->email]);
             if ($user->status == 0) {
                 return redirect()->route('dashboard.index')->with('success', 'Signed in');
             } else {
                 Auth::logout();
-                return redirect("login")->with('error', 'You do not have access to the dashboard');
+                return redirect()->route('login')->with('error', 'You do not have access to the dashboard');
             }
         }
 
-        return redirect("login")->with('error', 'Login details are not valid');
+        return redirect()->route('login')->with('error', 'Login details are not valid');
     }
 
 

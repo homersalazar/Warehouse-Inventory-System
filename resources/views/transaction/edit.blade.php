@@ -63,6 +63,21 @@
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
+                    <label class="sm:w-[10rem] sm:text-right">Area</label>
+                    <input type="text" name="" value="{{ $product->area->area_name }}"
+                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5 bg-gray-200" readonly>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <label class="sm:w-[10rem] sm:text-right">DR No.</label>
+                    <input type="text" name="tran_drno"
+                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <label class="sm:w-[10rem] sm:text-right">MPR/PO No.</label>
+                    <input type="text" name="tran_mpr"
+                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">Serial Number</label>
                     <input type="text" name="tran_serial"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">

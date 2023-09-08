@@ -24,6 +24,6 @@ class CheckLoggedIn
             }
             return $next($request);
         }
-        return redirect()->route('login');
+        return redirect()->route('user.login');
     }
 }

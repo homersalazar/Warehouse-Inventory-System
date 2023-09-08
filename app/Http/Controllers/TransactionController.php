@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Location;
+use App\Models\Pending;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -39,8 +40,8 @@ class TransactionController extends Controller
             // Store the total for this location in the $totals array
             $totals[$location->id] = $total;
         }
-
-        return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id'));
+        $pending = Pending::all();
+        return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id', 'user', 'pending'));
 
     }
 
@@ -48,10 +49,11 @@ class TransactionController extends Controller
     {
         $user = Auth::user();
         $product = Product::find($id);
-        $location = Location::where('id', '!=', $user->location->id)->get();
-        $transactions = Transaction::where('user_id', $user->id)
-        ->where('product_id', $id)
+        $transfer_local = Location::where('id', '!=', $user->location->id)->get();
+        $current_location = Location::find($user->location->id);
+        $transactions = Transaction::whereProduct_id($id)->whereLocation_id($user->location_id)
         ->get();
+
         $totals = [];
         $locations = Location::all();
         foreach ($locations as $location) {
@@ -71,7 +73,21 @@ class TransactionController extends Controller
             // Store the total for this location in the $totals array
             $totals[$location->id] = $total;
         }
-        return view('transaction.item', compact('product', 'user', 'totals', 'locations', 'transactions'));  
+
+        $pending = Pending::where('tran_from', $user->location_id)
+        ->orWhere('location_id', $user->location_id)
+        ->get();
+        return view('transaction.item', 
+        compact(
+            'product', 
+            'user', 
+            'totals', 
+            'locations', 
+            'transactions', 
+            'transfer_local', 
+            'current_location',
+            'pending'
+        ));  
 
     }
 
@@ -122,6 +138,8 @@ class TransactionController extends Controller
             'tran_option' => $request->tran_option,
             'tran_quantity' => $request->tran_quantity,
             'tran_unit' => $request->tran_unit,
+            'tran_drno' => $request->tran_drno,
+            'tran_mpr' => $request->tran_mpr,
             'tran_serial' => $request->tran_serial,
             'tran_comment' => $request->tran_comment,
             'tran_action' => 0,
@@ -138,6 +156,29 @@ class TransactionController extends Controller
                 ->route('transaction.user_item', ['id' => $request->product_ids])
                 ->with('success', 'Quantity added successfully.');
         }
+    }
+
+    public function transfer(Request $request)
+    {
+        $request->validate([
+            'tran_quantity' => 'required|numeric',
+        ]);
+        $status = 4;
+        $tranfer = new Pending;
+        $tranfer->product_id = $request->prod_sku;
+        $tranfer->tran_date = $request->tran_date;
+        $tranfer->tran_quantity = $request->tran_quantity; // make a condition na bawal isubmit kapag ang tranfer quantity is greater than the current stock
+        $tranfer->tran_action = $status;
+        $tranfer->user_id = Auth::user()->id;
+        $tranfer->tran_from = $request->current_location; // origin
+        $tranfer->location_id = $request->loc_id;  // destination
+        $tranfer->tran_drno = $request->tran_drno;
+        $tranfer->tran_mpr = $request->tran_mpr;
+        $tranfer->tran_comment = $request->tran_comment;
+        $tranfer->tran_serial = $request->tran_serial;
+        $tranfer->save(); 
+        return redirect()->back()
+        ->with('success', 'Transfer created successfully.');
     }
 
 }
