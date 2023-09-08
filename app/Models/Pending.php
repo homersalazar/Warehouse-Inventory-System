@@ -36,4 +36,16 @@ class Pending extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(product::class);
+    }
+
+    
 }

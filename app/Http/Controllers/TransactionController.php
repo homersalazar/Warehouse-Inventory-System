@@ -26,12 +26,12 @@ class TransactionController extends Controller
         foreach ($locations as $location) {
             $transactionAdd = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->where('tran_action', 0)
+                ->whereIn('tran_action',  [0, 2])
                 ->sum('tran_quantity');
             
             $transactionRemove = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->where('tran_action', 1)
+                ->whereIn('tran_action',  [1, 3])
                 ->sum('tran_quantity');
             
             $total_stock = $transactionAdd - $transactionRemove;
@@ -40,7 +40,8 @@ class TransactionController extends Controller
             // Store the total for this location in the $totals array
             $totals[$location->id] = $total;
         }
-        $pending = Pending::all();
+        $status = 4; // pending
+        $pending = Pending::whereTran_action($status);     
         return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id', 'user', 'pending'));
 
     }
@@ -59,12 +60,13 @@ class TransactionController extends Controller
         foreach ($locations as $location) {
             $transactionAdd = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->where('tran_action', 0)
+                ->whereIn('tran_action',  [0, 2])
+                // ->Where('tran_action', 2)
                 ->sum('tran_quantity');
             
             $transactionRemove = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->where('tran_action', 1)
+                ->whereIn('tran_action',  [1, 3])
                 ->sum('tran_quantity');
             
             $total_stock = $transactionAdd - $transactionRemove;
@@ -74,7 +76,9 @@ class TransactionController extends Controller
             $totals[$location->id] = $total;
         }
 
-        $pending = Pending::where('tran_from', $user->location_id)
+        $status = 4; // pending
+        $pending = Pending::whereTran_action($status)
+        ->where('tran_from', $user->location_id)
         ->orWhere('location_id', $user->location_id)
         ->get();
         return view('transaction.item', 
@@ -179,6 +183,42 @@ class TransactionController extends Controller
         $tranfer->save(); 
         return redirect()->back()
         ->with('success', 'Transfer created successfully.');
+    }
+
+    public function transfer_item($id)
+    {
+        $transactionAction =  5;
+        $tranfer_item = Pending::find($id);        
+        $transferInAction = 2; // transfer - In
+        $transferOutAction = 3; // transfer - out
+        $today = date('Y-m-d');
+        $transferIn = Transaction::updateOrCreate([
+            'product_id' => $tranfer_item->product_id,
+            'tran_date' => $today,
+            'tran_quantity' => $tranfer_item->tran_quantity,
+            'tran_drno' => $tranfer_item->tran_drno,
+            'tran_mpr' => $tranfer_item->tran_mpr,
+            'tran_serial' => $tranfer_item->tran_serial,
+            'tran_comment' => $tranfer_item->tran_comment,
+            'tran_action' => $transferInAction,
+            'location_id' =>  $tranfer_item->location_id,
+            'user_id' => auth()->user()->id
+        ]);
+        $transferOut = Transaction::updateOrCreate([
+            'product_id' => $tranfer_item->product_id,
+            'tran_date' => $today,
+            'tran_quantity' => $tranfer_item->tran_quantity,
+            'tran_drno' => $tranfer_item->tran_drno,
+            'tran_mpr' => $tranfer_item->tran_mpr,
+            'tran_serial' => $tranfer_item->tran_serial,
+            'tran_comment' => $tranfer_item->tran_comment,
+            'tran_action' => $transferOutAction,
+            'location_id' =>  $tranfer_item->tran_from,
+            'user_id' => $tranfer_item->user_id
+        ]);
+        $tranfer_item->delete();
+        return redirect()->back()
+        ->with('success', 'Transfer added successfully.');
     }
 
 }

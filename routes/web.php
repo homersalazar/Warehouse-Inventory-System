@@ -119,6 +119,7 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item');
         Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
         Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
+        Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
             Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');

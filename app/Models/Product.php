@@ -38,4 +38,9 @@ class Product extends Model
     {
         return $this->belongsTo(Transaction::class);
     }
+
+    public function pending()
+    {
+        return $this->hasMany(Pending::class);
+    }
 }

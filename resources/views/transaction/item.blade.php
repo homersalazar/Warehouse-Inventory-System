@@ -202,9 +202,9 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                @if ($row->tran_action == 0)
+                                @if ($row->tran_action == 0 || $row->tran_action == 2)
                                     {{ $row->tran_quantity }}
-                                @elseif ($row->tran_action == 1)
+                                @elseif ($row->tran_action == 1 || $row->tran_action == 3)
                                     -{{ $row->tran_quantity }}
                                 @endif
                             </td>
@@ -310,7 +310,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-row">
-                                    @if ($row->locationFrom == $current_location)
+                                    @if ($row->locationFrom == $current_location || session('role') == 0)
                                         <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
@@ -318,8 +318,8 @@
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     @endif
-                                    @if ($row->locationTo == $current_location)
-                                        <button type="button" class="py-2 px-3 text-sm font-medium text-green-900 focus:outline-none bg-white rounded-lg border border-green-200 hover:bg-green-100 hover:text-green-700 focus:z-10 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700">
+                                    @if ($row->locationTo == $current_location || session('role') == 0)
+                                        <button onclick="received_item('{{ $row->id }}' , '{{ $row->product->prod_name }}')" type="button" class="py-2 px-3 text-sm font-medium text-green-900 focus:outline-none bg-white rounded-lg border border-green-200 hover:bg-green-100 hover:text-green-700 focus:z-10 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700">
                                             <i class="fa-solid fa-cart-arrow-down"></i>
                                         </button>
                                     @endif
@@ -357,6 +357,27 @@
             infoDiv.classList.add("hidden");
             lessBtn.classList.add("hidden");
         });
+
+
+        const received_item = (transfer_id, prod_name) => {
+            var proceed = confirm(`This action will proceed this transfer ${prod_name}.  Are you sure?`);
+            if (proceed) {
+                $.ajax({
+                    url: `/transaction/transfer_item/${transfer_id}`, 
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: transfer_id,
+                    },
+                    success: function(data) {
+                        window.location.reload(); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); 
+                    }
+                });
+            }
+        }
 
         $(document).ready(function() {
             $('#transactionsTable').DataTable({
