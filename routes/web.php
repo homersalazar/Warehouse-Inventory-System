@@ -124,6 +124,7 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
             Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
+            Route::delete('/delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
         });
     });
 });

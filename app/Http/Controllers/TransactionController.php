@@ -52,7 +52,8 @@ class TransactionController extends Controller
         $product = Product::find($id);
         $transfer_local = Location::where('id', '!=', $user->location->id)->get();
         $current_location = Location::find($user->location->id);
-        $transactions = Transaction::whereProduct_id($id)->whereLocation_id($user->location_id)
+        $transactions = Transaction::whereProduct_id($id)
+        ->whereLocation_id($user->location_id)
         ->get();
 
         $totals = [];
@@ -237,5 +238,11 @@ class TransactionController extends Controller
         $updateTransaction->save();
         
         return redirect()->back()->with('success', 'Transaction updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $destroy = Transaction::find($id);
+        $destroy->delete();
     }
 }
