@@ -41,7 +41,10 @@ class TransactionController extends Controller
             $totals[$location->id] = $total;
         }
         $status = 4; // pending
-        $pending = Pending::whereTran_action($status);     
+        $pending = Pending::whereTran_action($status)
+        ->where('tran_from', $loc_id)
+        ->orWhere('location_id', $loc_id)
+        ->get();  
         return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id', 'user', 'pending'));
 
     }
@@ -240,9 +243,37 @@ class TransactionController extends Controller
         return redirect()->back()->with('success', 'Transaction updated successfully.');
     }
 
+    public function transfer_update(Request $request, $id)
+    {   
+        $request->validate([
+            'transfer_quantity' => 'required|numeric'
+        ]);       
+        $updateTransfer = Pending::find($id);
+        
+        if (!$updateTransfer) {
+            return redirect()->back()->with('error', 'Transaction not found.');
+        }
+        $updateTransfer->tran_date = $request->transfer_date;
+        $updateTransfer->location_id = $request->loc_id;
+        $updateTransfer->tran_quantity = $request->transfer_quantity;
+        $updateTransfer->tran_drno = $request->transfer_drno;
+        $updateTransfer->tran_mpr = $request->transfer_mpr;
+        $updateTransfer->tran_serial = $request->transfer_serial;
+        $updateTransfer->tran_comment = $request->transfer_comment;
+        $updateTransfer->save();
+        
+        return redirect()->back()->with('success', 'Transfer updated successfully.');
+    }
+
     public function destroy($id)
     {
         $destroy = Transaction::find($id);
+        $destroy->delete();
+    }
+
+    public function tranfer_destroy($id)
+    {
+        $destroy = Pending::find($id);
         $destroy->delete();
     }
 }

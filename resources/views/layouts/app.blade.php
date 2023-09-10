@@ -39,8 +39,7 @@
                 </a>
                 <div class="flex items-center md:order-2">
                     @if (session('role') == 0)
-                        <select onchange="universal_location()" name="universal_location" id="universal_location" 
-                        form="universal_form" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
+                        <select onchange="universal_location()" name="universal_location" id="universal_location"  form="universal_form" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
                             @foreach ($locations as $loc)
                                 <option class="text-gray-400 bg-gray-700 px-2" value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
                             @endforeach
@@ -130,7 +129,6 @@
     @endauth
     @yield('content')    
     <script>
-        let selectedLocation = '';
 
             const universal_location = () => {
                 loc_id = document.getElementById('universal_location').value;

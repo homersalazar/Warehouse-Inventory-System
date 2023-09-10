@@ -83,8 +83,8 @@
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
                         <div class="flex flex-flex gap-3">
-                            <input type="text" class="text-black" name="current_location" value="{{ $current_location->id }}">
-                            <input type="text" class="text-black" name="prod_sku" value="{{ $product->prod_sku }}">
+                            <input type="hidden" class="text-black" name="current_location" value="{{ $current_location->id }}">
+                            <input type="hidden" class="text-black" name="prod_sku" value="{{ $product->prod_sku }}">
                             <button type="submit"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
                             <button type="button" id="cancelBtn" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
                         </div>
@@ -308,10 +308,10 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-row">
                                     @if ($row->locationFrom == $current_location || session('role') == 0)
-                                        <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
+                                        <button data-modal-target="edit_transfer" onclick="edit_transfer('{{ $row->id }}' , '{{ $row->tran_date }}' , '{{ $row->tran_quantity }}' , '{{ $row->tran_serial }}' , '{{ $row->tran_comment }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}')" type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
-                                        <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-red-100 hover:text-red-700 focus:z-10 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700">
+                                        <button type="button" onclick="destroy_transfer('{{ $row->id }}')" class="py-2 px-3 mr-1 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-red-100 hover:text-red-700 focus:z-10 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     @endif
@@ -384,10 +384,39 @@
                 });
             });
         };
+        // onclick="edit_transfer('{{ $row->id }}' , '{{ $row->product_id }}' , '{{ $row->tran_date }}' , '{{ $row->tran_quantity }}' , '{{ $row->tran_serial }}' , '{{ $row->tran_comment }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}')
+        const edit_transfer = (tran_id, tran_date, tran_quantity, tran_serial, tran_comment, tran_drno, tran_mpr) => {
+            const modal = document.getElementById("edit_transfer");
+            modal.style.display = "block";
+            $("#tranfer_id").val(tran_id);
+            $("#transfer_date").val(tran_date);
+            $("#transfer_quantity").val(tran_quantity);
+            $("#transfer_drno").val(tran_drno);
+            $("#transfer_mpr").val(tran_mpr);
+            $("#transfer_serial").val(tran_serial);
+            $("#transfer_comment").val(tran_comment);
+            $("#tranfer_form").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize(); // Serialize the form data
+                $.ajax({
+                    url: `/transaction/transfer_update/${tran_id}`,
+                    type: "POST", // Use POST to update the resource
+                    data: formData,
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    },
+                });
+            });
+        };
 
         const closeModal = () => {
             const modal = document.getElementById("edit_transaction");
+            const transferModal = document.getElementById("edit_transfer");
             modal.style.display = "none";
+            transferModal.style.display = "none";
         }
 
         const destroy_transaction = (tran_id) => {
@@ -395,6 +424,26 @@
             if (proceed) {
                 $.ajax({
                     url: `/transaction/delete/${tran_id}`, 
+                    type: "DELETE",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: tran_id,
+                    },
+                    success: function(data) {
+                        window.location.reload(); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); 
+                    }
+                });
+            }
+        }
+
+        const destroy_transfer = (tran_id) => {
+            var proceed = confirm(`This action will proceed this delete.  Are you sure?`);
+            if (proceed) {
+                $.ajax({
+                    url: `/transaction/destroy/${tran_id}`, 
                     type: "DELETE",
                     data: {
                         _token: '{{ csrf_token() }}',
