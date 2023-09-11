@@ -139,6 +139,10 @@
 
     @yield('content')    
     <script>
+<<<<<<< HEAD
+=======
+
+>>>>>>> c688879486c8cbceee54bf27b979c886b5feb35b
             const universal_location = () => {
                 loc_id = document.getElementById('universal_location').value;
             }

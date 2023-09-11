@@ -319,6 +319,12 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-row">
                                     @if ($row->locationFrom == $current_location || session('role') == 0)
+<<<<<<< HEAD
+=======
+                                        <button data-modal-target="edit_transfer" onclick="edit_transfer('{{ $row->id }}' , '{{ $row->tran_date }}' , '{{ $row->tran_quantity }}' , '{{ $row->tran_serial }}' , '{{ $row->tran_comment }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}')" type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+>>>>>>> c688879486c8cbceee54bf27b979c886b5feb35b
                                         <button type="button" onclick="destroy_transfer('{{ $row->id }}')" class="py-2 px-3 mr-1 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-red-100 hover:text-red-700 focus:z-10 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -392,10 +398,39 @@
                 });
             });
         };
+        // onclick="edit_transfer('{{ $row->id }}' , '{{ $row->product_id }}' , '{{ $row->tran_date }}' , '{{ $row->tran_quantity }}' , '{{ $row->tran_serial }}' , '{{ $row->tran_comment }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}')
+        const edit_transfer = (tran_id, tran_date, tran_quantity, tran_serial, tran_comment, tran_drno, tran_mpr) => {
+            const modal = document.getElementById("edit_transfer");
+            modal.style.display = "block";
+            $("#tranfer_id").val(tran_id);
+            $("#transfer_date").val(tran_date);
+            $("#transfer_quantity").val(tran_quantity);
+            $("#transfer_drno").val(tran_drno);
+            $("#transfer_mpr").val(tran_mpr);
+            $("#transfer_serial").val(tran_serial);
+            $("#transfer_comment").val(tran_comment);
+            $("#tranfer_form").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize(); // Serialize the form data
+                $.ajax({
+                    url: `/transaction/transfer_update/${tran_id}`,
+                    type: "POST", // Use POST to update the resource
+                    data: formData,
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    },
+                });
+            });
+        };
 
         const closeModal = () => {
             const modal = document.getElementById("edit_transaction");
+            const transferModal = document.getElementById("edit_transfer");
             modal.style.display = "none";
+            transferModal.style.display = "none";
         }
 
         const destroy_transaction = (tran_id) => {
