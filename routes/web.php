@@ -103,9 +103,12 @@ Route::middleware('checkLoggedIn')->group(function() {
 Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'product'], function () {
         Route::get('/add_inventory', [ProductController::class, 'add_inventory'])->name('product.add_inventory');
-        Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
         Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
+        Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
         Route::post('/store', [ProductController::class, 'store'])->name('product.store');
+        
+        Route::get('/remove_inventory', [ProductController::class, 'remove_inventory'])->name('product.remove_inventory');
+        Route::post('/remove/autocomplete', [ProductController::class, 'remove_autocomplete'])->name('product.remove_autocomplete');
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
             Route::patch('update/{id}', [ProductController::class, 'update'])->name('product.update');
@@ -120,11 +123,19 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
         Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
         Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
+        Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
         Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
+        Route::delete('/destroy/{id}', [TransactionController::class, 'tranfer_destroy'])->name('transaction.destroy');
+       
+        
+        Route::get('remove_show/{id}', [TransactionController::class, 'remove_show'])->name('transaction.remove_show');
+        Route::post('/remove_store', [TransactionController::class, 'remove_store'])->name('transaction.remove_store');
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
             Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
             Route::delete('/delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
+        
+            Route::get('remove_edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'remove_edit'])->name('transaction.remove_edit');
         });
     });
 });

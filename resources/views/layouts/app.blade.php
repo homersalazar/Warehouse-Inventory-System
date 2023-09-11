@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
     <title>Warehouse</title>
 </head>
 
@@ -39,8 +39,7 @@
                 </a>
                 <div class="flex items-center md:order-2">
                     @if (session('role') == 0)
-                        <select onchange="universal_location()" name="universal_location" id="universal_location" 
-                        form="universal_form" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
+                        <select onchange="universal_location()" name="universal_location" id="universal_location"  form="universal_form" class="w-full py-2 pl-3 pr-2 mr-3 text-white bg-transparent border-none rounded md:p-0 md:w-auto focus:outline-none p-2" required>
                             @foreach ($locations as $loc)
                                 <option class="text-gray-400 bg-gray-700 px-2" value="{{ $loc->id }}">{{ $loc->loc_name }}</option>
                             @endforeach
@@ -84,7 +83,7 @@
                             <a href="{{ route('product.add_inventory') }}" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Inventory</a>
                         </li>
                         <li>
-                            <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Orders</a>
+                            <a href="{{ route('product.remove_inventory') }}" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Orders</a>
                         </li>
                         <li>
                             <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Serial</a>
@@ -128,17 +127,24 @@
             </div>
         </nav>
     @endauth
+    @if (session('success'))
+        <script>
+            $.notify("{{ session('success') }}", "success");
+        </script>
+    @elseif (session('error'))
+        <script>
+            $.notify("{{ session('error') }}", "error");
+        </script>
+    @endif
+
     @yield('content')    
     <script>
-        let selectedLocation = '';
-
             const universal_location = () => {
                 loc_id = document.getElementById('universal_location').value;
             }
             universal_location();
     </script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
-    {{-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script> --}}
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>

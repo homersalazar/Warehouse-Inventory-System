@@ -207,4 +207,74 @@ class ProductController extends Controller
             return $output;
         }
     }
+
+    // Stock Out
+
+    public function remove_inventory(){
+        return view('product.remove_inventory');
+    }
+
+    public function remove_autocomplete(Request $request)
+    {
+        $loc_id = session('role') == 0 ? $request->get('loc_id') : null;
+        if ($request->get('query')) {
+            $query = $request->get('query');
+            $data = Product::where('prod_name', 'LIKE', "%{$query}%")
+                ->orWhere('prod_sku', 'LIKE', "%{$query}%")
+                ->get();
+
+            if (count($data) > 0) {
+                $output = '<table class="w-full text-sm text-left">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Product Name
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            SKU
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 max-sm:hidden">
+                                            Part Number
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Manufacturer
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+    
+                foreach ($data as $row) {
+                    $output .= '<tr class="border-b px-6">
+                                    <td class="p-2 px-6 font-medium text-gray-900 whitespace-nowrap underline text-blue-800 cursor-pointer">';
+                    if (session("role") == 0) {
+                        $output .= '<a href="'.route('transaction.remove_edit', ['id' => $row->id, 'loc_id' => $loc_id]).'">'
+                                        .ucwords($row->prod_name).
+                                    '</a>';
+                    } else {
+                        $output .= '<a href="'.route('transaction.remove_show', $row->id).'">
+                                        '.ucwords($row->prod_name).'
+                                    </a>';
+                    }
+                    $output .= '</td>
+                                <td class="px-6">
+                                    SKU0'.$row->prod_sku.'
+                                </td>
+                                <td class="px-6 max-sm:hidden">
+                                    '.ucwords($row->prod_upc).'
+                                </td>
+                                <td class="px-6">
+                                    '.ucwords($row->manufacturer->manufacturer_name).'
+                                </td>
+                            </tr>';
+                }
+    
+                $output .= '</tbody></table>';
+            } else {
+                $output = '<div class="text-center border-t border-b text-base p-2">No Item found</div>';
+            }
+    
+            // You should only return the $output here, not view('product.add_inventory');
+            return $output;
+        }
+    }
 }

@@ -17,8 +17,6 @@ class UserController extends Controller
         ->join('locations', DB::raw('FIND_IN_SET(locations.id, REPLACE(users.location_id, " ", ""))'), '<>', DB::raw('0'))
         ->groupBy('users.id', 'users.name', 'users.email', 'users.role', 'users.status')
         ->get();
-
-    
         // $user_activated = User::where('status', 0)->with('location')->get();
         $user_deactivated = User::where('status', 1)->get();
         $deactivated_count = User::where('status', '=', 1)->count();
@@ -138,17 +136,29 @@ class UserController extends Controller
             'password' => 'required|min:6|confirmed',
             'password_confirmation' => 'required',
         ]);
-
-        User::firstOrCreate([
+    
+        if ($request->input('password') !== $request->input('password_confirmation')) {
+            return redirect()->back()->withInput()->withErrors(['password' => 'The password and password confirmation do not match.']);
+        }
+    
+        $user = User::where('email', $request->input('email'))->first();
+    
+        if ($user) {
+            return redirect()->back()->withInput()->with('error', 'The email address is already registered.');
+        }
+    
+        User::create([
             'name' => $request->input('fullname'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
-            'role' => 1, // 0 - admin , 1 - user
-            'status' => 1 // 0 - accepted , 1 - for approval
+            'role' => 1, // 0 - admin, 1 - user
+            'status' => 1 // 0 - accepted, 1 - for approval
         ]);
-
+    
         return redirect()->route('user.login')->with('success', 'You have signed up successfully. Please log in.');
     }
+    
+    
 
     public function login(Request $request)
     {

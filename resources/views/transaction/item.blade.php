@@ -33,10 +33,21 @@
         <div class="block mt-5 max-w-full p-6 border border-gray-200 shadow text-white bg-gray-800 border-gray-700">
             <ul class="flex flex-col gap-5 sm:flex-row mb-5">
                 @foreach ($locations as $location)
-                    <li>{{ $location->loc_name }} <span class="bg-blue-600 p-1 rounded-lg font-semibold">Stock:
-                            {{ $totals[$location->id] }}</span></li>
+                    <li>
+                        {{ $location->loc_name }} <span class="{{ $totals[$location->id] == 0 ? 'bg-red-600' : 'bg-blue-600' }} p-1 rounded-lg font-semibold">Stock: {{ $totals[$location->id] }}</span>
+                    </li>
                 @endforeach
             </ul>
+            <div>
+                <ul class="flex flex-col gap-5  mb-5">
+                    @foreach ($pending as $row)
+                    <li class="flex gap-1">
+                        {{ $row->LocationFrom->loc_name }} transfer <span class="bg-yellow-600 p-1 rounded-lg font-semibold"> Stock:
+                        {{ $row->tran_quantity }} </span> to {{ $row->LocationTo->loc_name }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
             <button type="button" id="transferBtn" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900 mt-5">
                 <i class="fa-solid fa-right-left"></i> Transfer Inventory</button>
             <div id="transfer_form" class="hidden">
@@ -83,8 +94,8 @@
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
                         <div class="flex flex-flex gap-3">
-                            <input type="text" class="text-black" name="current_location" value="{{ $current_location->id }}">
-                            <input type="text" class="text-black" name="prod_sku" value="{{ $product->prod_sku }}">
+                            <input type="hidden" class="text-black" name="current_location" value="{{ $current_location->id }}">
+                            <input type="hidden" class="text-black" name="prod_sku" value="{{ $product->prod_sku }}">
                             <button type="submit"  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
                             <button type="button" id="cancelBtn" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
                         </div>
@@ -308,10 +319,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-row">
                                     @if ($row->locationFrom == $current_location || session('role') == 0)
-                                        <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                        <button type="button" class="py-2 px-3 mr-1 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-red-100 hover:text-red-700 focus:z-10 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700">
+                                        <button type="button" onclick="destroy_transfer('{{ $row->id }}')" class="py-2 px-3 mr-1 text-sm font-medium text-red-900 focus:outline-none bg-white rounded-lg border border-red-200 hover:bg-red-100 hover:text-red-700 focus:z-10 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     @endif
@@ -395,6 +403,26 @@
             if (proceed) {
                 $.ajax({
                     url: `/transaction/delete/${tran_id}`, 
+                    type: "DELETE",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: tran_id,
+                    },
+                    success: function(data) {
+                        window.location.reload(); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error); 
+                    }
+                });
+            }
+        }
+
+        const destroy_transfer = (tran_id) => {
+            var proceed = confirm(`This action will proceed this delete.  Are you sure?`);
+            if (proceed) {
+                $.ajax({
+                    url: `/transaction/destroy/${tran_id}`, 
                     type: "DELETE",
                     data: {
                         _token: '{{ csrf_token() }}',
