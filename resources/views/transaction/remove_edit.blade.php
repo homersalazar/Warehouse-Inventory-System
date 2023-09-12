@@ -31,10 +31,10 @@
                     <label class="sm:w-[10rem] sm:text-right">Transaction</label>
                     <div class="grid grid-col-1 gap-3 mt-1">
                         <div class="flex items-center">
-                            <select type="text" name="pref_id" id="minStock" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
-                                <option value="0">Stock Out</option>
-                                <option value="1">Return Stock</option>
-                                <option value="2">Junk</option>
+                            <select type="text" name="tran_action" id="tran_action" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                                <option value="1">Stock Out</option>
+                                <option value="4">Return Stock</option>
+                                <option value="5">Junk</option>
                             </select>
                         </div>
                     </div>
@@ -56,11 +56,6 @@
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">MPR/PO No.</label>
-                    <input type="text" name="tran_mpr"
-                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
-                </div>
-                <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">Serial Number</label>
                     <input type="text" name="tran_serial"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
@@ -77,6 +72,7 @@
                     @else
                         <input type="hidden" name="location_id" value="{{ $location->id }}">
                     @endif
+                    <input type="hidden" name="total" value="{{ $total }}">
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
                     <a href="{{ route('product.remove_inventory') }}" class="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</a>
                 </div>

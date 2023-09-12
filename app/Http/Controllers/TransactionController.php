@@ -31,7 +31,7 @@ class TransactionController extends Controller
             
             $transactionRemove = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->whereIn('tran_action',  [1, 3])
+                ->whereIn('tran_action',  [1, 3, 4, 5])
                 ->sum('tran_quantity');
             $transferAdd = Pending::where('tran_from', $location->id)
             ->where('product_id', $product->prod_sku)
@@ -71,7 +71,7 @@ class TransactionController extends Controller
                 ->sum('tran_quantity');
             $transactionRemove = Transaction::where('location_id', $location->id)
                 ->where('product_id', $product->prod_sku)
-                ->whereIn('tran_action',  [1, 3])
+                ->whereIn('tran_action',  [1, 3, 4, 5])
                 ->sum('tran_quantity');
             $transferAdd = Pending::where('tran_from', $location->id)
                 ->where('product_id', $product->prod_sku)
@@ -112,9 +112,9 @@ class TransactionController extends Controller
             ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $loc_id)
             ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3])
+            ->whereIn('tran_action',  [1, 3, 4, 5])
             ->sum('tran_quantity');
-        $transferAdd = Pending::where('tran_from', $user->location->id)
+        $transferAdd = Pending::where('tran_from', $loc_id)
             ->where('product_id', $product->prod_sku)
             ->sum('tran_quantity');
         $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
@@ -133,7 +133,7 @@ class TransactionController extends Controller
             ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $user->location->id)
             ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3])
+            ->whereIn('tran_action',  [1, 3, 4, 5])
             ->sum('tran_quantity');
         $transferAdd = Pending::where('tran_from', $user->location->id)
             ->where('product_id', $product->prod_sku)
@@ -186,7 +186,7 @@ class TransactionController extends Controller
             ->sum('tran_quantity')
         - Transaction::where('location_id', $location->id)
             ->where('product_id', $request->prod_sku)
-            ->whereIn('tran_action', [1, 3])
+            ->whereIn('tran_action', [1, 3, 4, 5])
             ->sum('tran_quantity')
         - Pending::where('tran_from', $location->id)
             ->where('product_id', $request->prod_sku)
@@ -313,7 +313,7 @@ class TransactionController extends Controller
             ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $user->location->id)
             ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3])
+            ->whereIn('tran_action',  [1, 3, 4, 5])
             ->sum('tran_quantity');
         $transferAdd = Pending::where('tran_from', $user->location->id)
             ->where('product_id', $product->prod_sku)
@@ -335,9 +335,9 @@ class TransactionController extends Controller
             ->sum('tran_quantity');
         $transactionRemove = Transaction::where('location_id', $loc_id)
             ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3])
+            ->whereIn('tran_action',  [1, 3, 4, 5])
             ->sum('tran_quantity');
-        $transferAdd = Pending::where('tran_from', $user->location->id)
+        $transferAdd = Pending::where('tran_from', $loc_id)
             ->where('product_id', $product->prod_sku)
             ->sum('tran_quantity');
         $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
@@ -349,29 +349,32 @@ class TransactionController extends Controller
         $request->validate([
             'tran_quantity' => 'required|numeric'
         ]);
-        $transaction = Transaction::updateOrCreate([
-            'product_id' => $request->product_ids,
-            'tran_date' => $request->tran_date,
-            'tran_option' => $request->tran_option,
-            'tran_quantity' => $request->tran_quantity,
-            'tran_unit' => $request->tran_unit,
-            'tran_drno' => $request->tran_drno,
-            'tran_mpr' => $request->tran_mpr,
-            'tran_serial' => $request->tran_serial,
-            'tran_comment' => $request->tran_comment,
-            'tran_action' => 0,
-            'location_id' => $request->location_id,
-            'user_id' => auth()->user()->id
-        ]);
-        $transaction->save();
-        if(session('role') == 0){
-            return redirect()
-                ->route('transaction.item', ['id' => $request->product_ids, 'loc_id' => $request->location_id])
-                ->with('success', 'Quantity added successfully.');
-        }else{
-            return redirect()
-                ->route('transaction.user_item', ['id' => $request->product_ids])
-                ->with('success', 'Quantity added successfully.');
+
+        if ($request->tran_quantity > $request->total) {
+            return redirect()->back()->with('error', 'The order quantity is higher than the current stock.');
+        } else {
+            $transaction = Transaction::updateOrCreate([
+                'product_id' => $request->product_ids,
+                'tran_date' => $request->tran_date,
+                'tran_quantity' => $request->tran_quantity,
+                'tran_drno' => $request->tran_drno,
+                'tran_serial' => $request->tran_serial,
+                'tran_comment' => $request->tran_comment,
+                'tran_action' => $request->tran_action,
+                'location_id' => $request->location_id,
+                'user_id' => auth()->user()->id
+            ]);
+            $transaction->save();
+            if(session('role') == 0){
+                return redirect()
+                    ->route('transaction.item', ['id' => $request->product_ids, 'loc_id' => $request->location_id])
+                    ->with('success', 'Quantity removed successfully.');
+            }else{
+                return redirect()
+                    ->route('transaction.user_item', ['id' => $request->product_ids])
+                    ->with('success', 'Quantity removed successfully.');
+            }
         }
+
     }
 }

@@ -126,13 +126,9 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
         Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
         Route::delete('/destroy/{id}', [TransactionController::class, 'tranfer_destroy'])->name('transaction.destroy');
-<<<<<<< HEAD
-       
-        
+
         Route::get('remove_show/{id}', [TransactionController::class, 'remove_show'])->name('transaction.remove_show');
         Route::post('/remove_store', [TransactionController::class, 'remove_store'])->name('transaction.remove_store');
-=======
->>>>>>> c688879486c8cbceee54bf27b979c886b5feb35b
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
             Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');

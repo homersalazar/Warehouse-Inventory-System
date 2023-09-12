@@ -34,7 +34,7 @@
     @auth
         <nav class="bg-white border-gray-200 dark:bg-gray-900">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <a href="https://flowbite.com/" class="flex items-center">
+                <a href="/dashboard" class="flex items-center">
                     <img src="{{ asset('assets/logo.png') }}" class="h-12" alt="logo" class="text-white">
                 </a>
                 <div class="flex items-center md:order-2">
@@ -84,9 +84,6 @@
                         </li>
                         <li>
                             <a href="{{ route('product.remove_inventory') }}" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Orders</a>
-                        </li>
-                        <li>
-                            <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Serial</a>
                         </li>
                         @if (session('role') == 0)
                             <li>
@@ -139,10 +136,6 @@
 
     @yield('content')    
     <script>
-<<<<<<< HEAD
-=======
-
->>>>>>> c688879486c8cbceee54bf27b979c886b5feb35b
             const universal_location = () => {
                 loc_id = document.getElementById('universal_location').value;
             }
