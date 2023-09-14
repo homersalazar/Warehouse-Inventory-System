@@ -15,17 +15,19 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('product_id');
+            $table->smallInteger('prod_sku');
             $table->date('tran_date');
-            $table->string('tran_option')->nullable();
+            $table->smallInteger('tran_option')->nullable();
             $table->integer('tran_quantity');
             $table->string('tran_unit')->nullable();
             $table->string('tran_serial')->nullable();
-            $table->string('tran_comment')->nullable();
-            $table->string('tran_action')->nullable();
+            $table->string('tran_remarks')->nullable();
+            $table->smallInteger('tran_action')->nullable();
             $table->string('tran_drno')->nullable();
             $table->string('tran_mpr')->nullable();
-            $table->string('location_id')->nullable();
+            $table->smallInteger('area_id')->nullable();
+            $table->smallInteger('equipment_id')->nullable();
+            $table->smallInteger('location_id')->nullable();
             $table->smallInteger('user_id');
             $table->timestamps();
         });

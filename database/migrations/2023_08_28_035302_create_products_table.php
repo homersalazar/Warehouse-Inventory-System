@@ -17,11 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('prod_name');
             $table->integer('prod_sku')->nullable();        
-            $table->string('prod_upc')->nullable();
-            $table->string('prod_summary')->nullable();
+            $table->string('prod_partno')->nullable();
             $table->smallInteger('label_id')->nullable();
-            $table->smallInteger('area_id')->nullable();
             $table->smallInteger('manufacturer_id')->nullable();
+            $table->smallInteger('unit_id')->nullable();
             $table->smallInteger('pref_id');
             $table->timestamps();
         });

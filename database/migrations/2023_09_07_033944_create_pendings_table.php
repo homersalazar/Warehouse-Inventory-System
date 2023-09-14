@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('pendings', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('product_id');
+            $table->smallInteger('prod_sku'); // change to prod_sku
             $table->date('tran_date');
             $table->integer('tran_quantity');
             $table->string('tran_serial')->nullable();
-            $table->string('tran_comment')->nullable();
+            $table->string('tran_remarks')->nullable();
             $table->string('tran_action')->nullable();
             $table->string('tran_drno')->nullable();
             $table->string('tran_mpr')->nullable();

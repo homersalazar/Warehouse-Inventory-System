@@ -96,7 +96,6 @@ Route::middleware('checkLoggedIn')->group(function() {
         });
         Route::post('/autocomplete', [ManufacturerController::class, 'autocomplete'])->name('manufacturer.autocomplete');
         Route::post('/store', [ManufacturerController::class, 'store'])->name('manufacturer.store');
-
     });
 });
 
