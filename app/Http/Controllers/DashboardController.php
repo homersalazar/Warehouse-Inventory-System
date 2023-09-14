@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Location;
+use App\Models\Manufacturer;
+use App\Models\Pending;
+use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -12,9 +19,39 @@ class DashboardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        return view('dashboard.index');
+    {   
+        $products = Product::all();
+        $user = Auth::user();
+        $productTotals = [];
+        
+        foreach ($products as $product) {
+            $transactionAdd = Transaction::where('location_id', $user->location_id)
+                ->where('product_id', $product->prod_sku)
+                ->whereIn('tran_action', [0, 2])
+                ->sum('tran_quantity');
+            
+            $transactionRemove = Transaction::where('location_id', $user->location_id)
+                ->where('product_id', $product->prod_sku)
+                ->whereIn('tran_action', [1, 3, 4, 5])
+                ->sum('tran_quantity');
+            
+            $transferAdd = Pending::where('tran_from', $user->location_id)
+                ->where('product_id', $product->prod_sku)
+                ->sum('tran_quantity');
+            
+            $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
+            $total = $total_stock <= 0 ? 0 : $total_stock;
+        
+            $productTotals[$product->id] = $total; // Assuming each product has a unique identifier like 'id'
+        }
+
+        $areas = Area::all();
+        $manufacturers = Manufacturer::all();
+        $locations = Location::find($user->location_id);
+        return view('dashboard.index', compact('products', 'areas', 'manufacturers', 'user', 'locations', 'productTotals'));
     }
+
+    
 
     /**
      * Show the form for creating a new resource.

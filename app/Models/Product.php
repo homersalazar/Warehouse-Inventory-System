@@ -43,4 +43,9 @@ class Product extends Model
     {
         return $this->hasMany(Pending::class);
     }
+
+    public function preference()
+    {
+        return $this->belongsTo(Preference::class, 'pref_id');
+    }
 }

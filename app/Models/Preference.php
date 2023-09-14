@@ -10,4 +10,9 @@ class Preference extends Model
     use HasFactory;
 
     protected $fillable = ['pref_name' , 'pref_value'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'pref_id');
+    }
 }
