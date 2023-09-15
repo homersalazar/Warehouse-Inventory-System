@@ -9,7 +9,7 @@ class Pending extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'product_id',
+        'prod_sku',
         'tran_date',
         'tran_quantity',
         'tran_serial',

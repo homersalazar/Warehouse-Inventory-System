@@ -117,10 +117,13 @@ Route::middleware('checkLoggedIn')->group(function() {
 
 Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'transaction'], function () {
-        Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show');
-        Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item');
-        Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store');
+        Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show'); // user
+        Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store'); // user
+
+        Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item'); // user/admin
         Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
+
+
         Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
         Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
         Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
@@ -132,7 +135,6 @@ Route::middleware('checkLoggedIn')->group(function() {
             Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
             Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
             Route::delete('/delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
-        
             Route::get('remove_edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'remove_edit'])->name('transaction.remove_edit');
         });
     });

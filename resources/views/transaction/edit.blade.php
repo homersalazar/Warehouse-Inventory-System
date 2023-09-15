@@ -62,11 +62,21 @@
                     <input type="number" name="tran_unit"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">Area</label>
-                    <input type="text" name="" value="{{ $product->area->area_name }}"
-                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5 bg-gray-200" readonly>
-                </div>
+                @if ($transactionArea->isEmpty())
+                    <div class="flex flex-col">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <label class="sm:w-[10rem] sm:text-right">Area</label>
+                            <input type="text" name="area_name" autocomplete="off" id="area_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="hidden" name="area_id" id="area_id">  {{-- store id of the selected area --}}
+                        </div>
+                        <div id="areaList" class="z-10 sm:ml-[10.8rem]"></div>                                
+                    </div>
+                @else
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label class="sm:w-[10rem] sm:text-right">Area</label>
+                        <input type="text" name="" value="{{ strtoupper($transactionArea->first()->area->area_name) }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5 bg-gray-200" readonly>
+                    </div>
+                @endif
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">DR No.</label>
                     <input type="text" name="tran_drno"
@@ -83,12 +93,12 @@
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">Comments</label>
-                    <input type="text" name="tran_comment"
+                    <label class="sm:w-[10rem] sm:text-right">Remarks</label>
+                    <input type="text" name="tran_remarks"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-flex gap-3">
-                    <input type="hidden" name="product_ids" id="product_ids" value="{{ $product->prod_sku }}">
+                    <input type="hidden" name="prod_sku" id="prod_sku" value="{{ $product->prod_sku }}">
                     @if (session('role') == 1)
                         <input type="hidden" name="location_id" value="{{ $user->location->id }}">
                     @else
@@ -116,5 +126,42 @@
             }
         }
 
+        const search = (e) => {
+            let Input = e.getAttribute("id");
+            if(Input == 'area_name') {
+                $('#area_id').val('');
+            } 
+        }
+
+        $(document).mouseup(function(e){
+            var area = $("#areaList");
+            if (!area.is(e.target) && area.has(e.target).length === 0){
+                area.hide();
+            }
+        });
+
+               // autocomplete area
+        $(document).ready(function(){
+            $('#area_name').keyup(function(){
+                var query = $(this).val();
+                if(query != ''){
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('area.autocomplete') }}",
+                        method:"POST",
+                        data:{query:query , _token:_token},
+                        success:function(data){
+                            $('#areaList').fadeIn();
+                            $('#areaList').html(data);
+                        }
+                    });
+                }
+            });
+        });
+        const fill_area = (area_id, area_name) => {
+            $('#area_id').val(area_id);
+            $('#area_name').val(area_name);
+            $('#areaList').fadeOut();  
+        }
     </script>
 @endsection

@@ -14,8 +14,9 @@ class Area extends Model
         'area_status'
     ];
     
-    public function products()
+    public function transaction()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Transaction::class);
     }
+    
 }

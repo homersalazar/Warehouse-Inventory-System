@@ -93,8 +93,8 @@
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Comments</label>
-                            <input type="text" name="tran_comment"
+                            <label class="sm:w-[10rem] sm:text-right">$emarks</label>
+                            <input type="text" name="tran_remarks"
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
                         <div class="flex flex-flex gap-3">
@@ -117,13 +117,11 @@
                     class="fa-solid fa-chevron-down"></i> More Info</button>
             <div id="infoDiv" class="flex flex-col gap-2 hidden py-5 sm:ml-5">
                 <label class="font-bold">SKU</label>
-                SKU0{{ $product->prod_sku }}
-                <label class="font-bold mt-2">Summary</label>
-                {{ ucwords($product->prod_summary) }}
+                    SKU0{{ $product->prod_sku }}
                 <label class="font-bold mt-2">Area</label>
-                {{ ucwords($product->area->area_name) }}
+                    {{ strtoupper($transactionArea->first()->area->area_name) }}
                 <label class="font-bold mt-2">Manufacturer</label>
-                {{ ucwords($product->manufacturer->manufacturer_name) }}
+                    {{ ucwords($product->manufacturer->manufacturer_name) }}
             </div>
             <button id="lessBtn" type="button"
                 class="hidden text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i

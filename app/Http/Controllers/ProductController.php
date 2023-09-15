@@ -56,7 +56,7 @@ class ProductController extends Controller
                                         .strtoupper($row->prod_name).
                                     '</a>';
                     } else {
-                        $output .= '<a href="'.route('transaction.show', $row->id).'">
+                        $output .= '<a href="'.route('transaction.show', $row->prod_sku).'">
                                         '.ucwords($row->prod_name).'
                                     </a>';
                     }
