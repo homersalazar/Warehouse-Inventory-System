@@ -3,7 +3,7 @@
 @section('content')
     <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Areas</h1>
-        <div class="mt-5">
+        <div class="my-5">
             <a href="{{ route('area.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New Area</a>
         </div>
         <div class="relative">
@@ -37,7 +37,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="flex flex-row gap-2 mt-5">
+        <div class="flex flex-row gap-2 my-5">
             <a href="" class="bg-green-600 text-white px-3 rounded-md py-2">New area</a>
             <button type="button" id="show" class="undeline text-blue-600 font-semibold">Show Inactive Areas({{ $deactivated_count }})</button>
             <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold">Hide Inactive Areas</button>
@@ -65,7 +65,7 @@
                                     <i class="fa-regular text-blue-600 fa-pen-to-square"></i>
                                 </a>
                                 <button type="button" onclick="reactivate_area('{{ $areas->id }}' , '{{ $areas->area_name }}')" class="rounded-lg text-base px-2">
-                                    <i class="fa-regular text-red-600 fa-circle-xmark"></i>                                
+                                    <i class="fa-regular text-green-600 fa-circle-check"></i>                                
                                 </button>
                             </td>
                         </tr>

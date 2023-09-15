@@ -48,25 +48,35 @@ class AreaController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'area_name' => 'required'
+            'area_name' => 'required|unique:areas,area_name,' . $id 
         ]);
         
         if ($validated) {
             $area = Area::find($id);
+            
             if (!$area) {
-                return redirect()->back()
-                    ->with('error', 'Location not found.');
+                return redirect()->back()->with('error', 'Area not found.');
             }
-            $area->area_name = ucwords($request->area_name);
+            
+            $areaIsExist = Area::where('area_name', ucwords($request->input('area_name')))
+                ->where('id', '!=', $id) 
+                ->first();
+    
+            if ($areaIsExist) {
+                return redirect()->back()->with('error', 'The area is already exist.');
+            }
+            
+            $area->area_name = ucwords($request->input('area_name'));
             if ($area->save()) {
                 return redirect()->route('area.index')
-                    ->with('success', ucwords($request->area_name).' has been updated successfully.');
+                    ->with('success', ucwords($request->input('area_name')) . ' has been updated successfully.');
             } else {
                 return redirect()->back()
                     ->with('error', 'An error occurred while updating the area.');
             }
         }
     }
+    
 
     public function deactivate(Request $request, $id)
     {

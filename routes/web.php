@@ -64,26 +64,21 @@ Route::resource('/dashboard', DashboardController::class)->middleware('checkLogg
         });
     });
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'label'], function () {
-        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
-    });
-});
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'area'], function () {
-        Route::middleware('role:0')->group(function () {
-            Route::get('/', [AreaController::class, 'index'])->name('area.index');
-            Route::match(['get', 'post'], '/create', [AreaController::class, 'create'])->name('area.create');
-            Route::get('/edit/{id}', [AreaController::class, 'edit'])->name('area.edit');
-            Route::patch('/update/{id}', [AreaController::class, 'update'])->name('area.update');
-            Route::post('/deactivate/{id}', [AreaController::class, 'deactivate'])->name('area.deactivate');
-            Route::post('/reactivate/{id}', [AreaController::class, 'reactivate'])->name('area.reactivate');
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'area'], function () {
+            Route::middleware('role:0')->group(function () {
+                Route::get('/', [AreaController::class, 'index'])->name('area.index');
+                Route::match(['get', 'post'], '/create', [AreaController::class, 'create'])->name('area.create');
+                Route::get('/edit/{id}', [AreaController::class, 'edit'])->name('area.edit');
+                Route::patch('/update/{id}', [AreaController::class, 'update'])->name('area.update');
+                Route::post('/deactivate/{id}', [AreaController::class, 'deactivate'])->name('area.deactivate');
+                Route::post('/reactivate/{id}', [AreaController::class, 'reactivate'])->name('area.reactivate');
+            });
+            Route::post('/store', [AreaController::class, 'store'])->name('area.store');
+            Route::post('/autocomplete', [AreaController::class, 'autocomplete'])->name('area.autocomplete');
         });
-        Route::post('/store', [AreaController::class, 'store'])->name('area.store');
-        Route::post('/autocomplete', [AreaController::class, 'autocomplete'])->name('area.autocomplete');
     });
-});
 
 
 Route::middleware('checkLoggedIn')->group(function() {
@@ -137,6 +132,12 @@ Route::middleware('checkLoggedIn')->group(function() {
         
             Route::get('remove_edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'remove_edit'])->name('transaction.remove_edit');
         });
+    });
+});
+
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'label'], function () {
+        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
     });
 });
 
