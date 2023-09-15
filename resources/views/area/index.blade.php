@@ -38,7 +38,7 @@
             </table>
         </div>
         <div class="flex flex-row gap-2 my-5">
-            <a href="" class="bg-green-600 text-white px-3 rounded-md py-2">New area</a>
+            <a href="{{ route('area.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New area</a>
             <button type="button" id="show" class="undeline text-blue-600 font-semibold">Show Inactive Areas({{ $deactivated_count }})</button>
             <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold">Hide Inactive Areas</button>
         </div>

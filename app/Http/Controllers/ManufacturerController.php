@@ -11,7 +11,8 @@ class ManufacturerController extends Controller
         $activated_manufacturer = Manufacturer::whereManufacturer_status(0)->get();        
         $deactivated_manufacturer = Manufacturer::whereManufacturer_status(1)->get();
         $deactivated_count = Manufacturer::whereManufacturer_status(1)->count();        
-        return view('manufacturer.index', compact('activated_manufacturer', 'deactivated_manufacturer', 'deactivated_count'));    
+        return view('manufacturer.index', 
+        compact('activated_manufacturer', 'deactivated_manufacturer', 'deactivated_count'));    
     }
 
     public function create(){
@@ -48,30 +49,39 @@ class ManufacturerController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'manufacturer_name' => 'required'
+            'manufacturer_name' => 'required|unique:manufacturers,manufacturer_name,' . $id 
         ]);
         
         if ($validated) {
             $manufacturer = Manufacturer::find($id);
+            
             if (!$manufacturer) {
-                return redirect()->back()
-                    ->with('error', 'Location not found.');
+                return redirect()->back()->with('error', 'Manufacturer not found.');
             }
-            $manufacturer->manufacturer_name = ucwords($request->manufacturer_name);
+            
+            $manufacturerIsExist = Manufacturer::where('manufacturer_name', ucwords($request->input('manufacturer_name')))
+                ->where('id', '!=', $id) 
+                ->first();
+    
+            if ($manufacturerIsExist) {
+                return redirect()->back()->with('error', 'The manufacturer is already exist.');
+            }
+            
+            $manufacturer->manufacturer_name = ucwords($request->input('manufacturer_name'));
             if ($manufacturer->save()) {
                 return redirect()->route('manufacturer.index')
-                    ->with('success', ucwords($request->manufacturer_name).' has been updated successfully.');
+                    ->with('success', ucwords($request->input('manufacturer_name')) . ' has been updated successfully.');
             } else {
-                return redirect()->back()
-                    ->with('error', 'An error occurred while updating the manufacturer.');
+                return redirect()->back()->with('error', 'An error occurred while updating the manufacturer.');
             }
         }
     }
 
     public function deactivate(Request $request, $id)
     {
+        $disabled = 1;
         $manufacturer = Manufacturer::find($id);
-        $manufacturer->manufacturer_status = 1;
+        $manufacturer->manufacturer_status = $disabled;
         $manufacturer->save();
         return redirect()->route('manufacturer.index')
         ->with('success', ucwords($request->manufacturer_name).' has been updated successfully.');
@@ -79,8 +89,9 @@ class ManufacturerController extends Controller
 
     public function reactivate(Request $request, $id)
     {
+        $enabled = 0;
         $manufacturer = Manufacturer::find($id);
-        $manufacturer->manufacturer_status = 0;
+        $manufacturer->manufacturer_status = $enabled;
         $manufacturer->save();
         return redirect()->route('manufacturer.index')
         ->with('success', ucwords($request->manufacturer_name).' has been updated successfully.');
