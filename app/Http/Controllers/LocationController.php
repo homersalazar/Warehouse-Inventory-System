@@ -54,7 +54,7 @@ class LocationController extends Controller
                 ->with('success', ucwords($request->loc_name).' has been created successfully.');
             } else {
                 return redirect()->back()
-                ->with('success', ucwords($request->loc_name).' already exists.');
+                ->with('error', ucwords($request->loc_name).' already exists.');
             }
         }
     }
@@ -98,8 +98,7 @@ class LocationController extends Controller
         if ($validated) {
             $location = Location::find($id);
             if (!$location) {
-                return redirect()->back()
-                    ->with('error', 'Location not found.');
+                return redirect()->back() ->with('error', 'Location not found.');
             }
             $location->loc_name = ucwords($request->loc_name);
             $location->loc_address = ucwords($request->loc_address);
@@ -125,9 +124,6 @@ class LocationController extends Controller
      */
     public function destroy($id)
     {
-        $location = Location::find($id);
-        $location->delete();
-        return redirect()->route('location.index')
-        ->with('success', 'Location has been deleted successfully.');
+
     }
 }

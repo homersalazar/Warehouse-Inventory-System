@@ -24,47 +24,45 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+    Route::get('/', function () {
+        return view('index');
+    });
 
 Route::resource('/preference', PreferenceController::class)->middleware(['checkLoggedIn', 'role:0']); // preference
 Route::resource('/dashboard', DashboardController::class)->middleware('checkLoggedIn');
 
-Route::group(['prefix' => 'user'], function () {
-    Route::get('/login', [UserController::class, 'show_login'])->name('user.login');
-    Route::post('/login', [UserController::class, 'login'])->name('login');
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('/login', [UserController::class, 'show_login'])->name('user.login');
+        Route::post('/login', [UserController::class, 'login'])->name('login');
 
-    Route::get('/register', [UserController::class, 'show_register'])->name('user.register');
-    Route::post('/register', [UserController::class, 'register'])->name('register');
+        Route::get('/register', [UserController::class, 'show_register'])->name('user.register');
+        Route::post('/register', [UserController::class, 'register'])->name('register');
 
-    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+        Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
-    Route::get('/profile/{id}', [UserController::class, 'profile'])->name('user.profile');
-    Route::patch('/profile/update/{id}', [UserController::class, 'profile_update'])->name('user.profile_update');
-    
-    Route::middleware(['checkLoggedIn' , 'role:0'])->group(function() {
-        Route::get('/', [UserController::class, 'index'])->name('user.index');
-        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
-        Route::patch('/update/{id}', [UserController::class, 'update'])->name('user.update');
-        Route::get('/edit/password/{id}', [UserController::class, 'edit_password'])->name('user.edit_password');
-        Route::patch('/update/password/{id}', [UserController::class, 'update_password'])->name('user.update_password');
-        Route::post('/deactivate/{id}', [UserController::class, 'deactivate'])->name('user.deactivate');
-        Route::post('/reactivate/{id}', [UserController::class, 'reactivate'])->name('user.reactivate');
+        Route::get('/profile/{id}', [UserController::class, 'profile'])->name('user.profile');
+        Route::patch('/profile/update/{id}', [UserController::class, 'profile_update'])->name('user.profile_update');
+        
+        Route::middleware(['checkLoggedIn' , 'role:0'])->group(function() {
+            Route::get('/', [UserController::class, 'index'])->name('user.index');
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+            Route::patch('/update/{id}', [UserController::class, 'update'])->name('user.update');
+            Route::get('/edit/password/{id}', [UserController::class, 'edit_password'])->name('user.edit_password');
+            Route::patch('/update/password/{id}', [UserController::class, 'update_password'])->name('user.update_password');
+            Route::post('/deactivate/{id}', [UserController::class, 'deactivate'])->name('user.deactivate');
+            Route::post('/reactivate/{id}', [UserController::class, 'reactivate'])->name('user.reactivate');
+        });
     });
-});
 
-Route::middleware(['checkLoggedIn', 'role:0'])->group(function() {
-    Route::group(['prefix' => 'location'], function () {
-        Route::get('/', [LocationController::class, 'index'])->name('location.index');
-        Route::match(['get', 'post'], '/create', [LocationController::class, 'create'])->name('location.create');
-        Route::post('/store', [LocationController::class, 'store'])->name('location.store');
-        Route::get('/edit/{id}', [LocationController::class, 'edit'])->name('location.edit');
-        Route::patch('/update/{id}', [LocationController::class, 'update'])->name('location.update');
-        Route::delete('/delete/{id}', [LocationController::class, 'destroy'])->name('location.destroy');
-        Route::get('/app', [LocationController::class, 'universal_location'])->name('location.app');
+    Route::middleware(['checkLoggedIn', 'role:0'])->group(function() {
+        Route::group(['prefix' => 'location'], function () {
+            Route::get('/', [LocationController::class, 'index'])->name('location.index');
+            Route::match(['get', 'post'], '/create', [LocationController::class, 'create'])->name('location.create');
+            Route::post('/store', [LocationController::class, 'store'])->name('location.store');
+            Route::get('/edit/{id}', [LocationController::class, 'edit'])->name('location.edit');
+            Route::patch('/update/{id}', [LocationController::class, 'update'])->name('location.update');
+        });
     });
-});
 
 Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'label'], function () {

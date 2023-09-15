@@ -1,16 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    table.dataTable th,
-    table.dataTable td {
-    white-space: nowrap;
-    }
-</style>
     <div class="flex flex-col pt-5 px-5 sm:px-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Locations</h1>
-        <div class="mt-5">
-            <a href="{{ route('location.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">Add New Location</a>
+        <div class="my-5">
+            <a href="{{ route('location.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2 ">Add New Location</a>
         </div>
         <div>
             <table id="locationTable" style="width: 100%;" class="w-full text-sm text-left">
