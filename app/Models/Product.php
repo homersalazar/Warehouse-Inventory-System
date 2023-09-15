@@ -11,11 +11,10 @@ class Product extends Model
     protected $fillable = [
         'prod_name',
         'prod_sku',
-        'prod_upc',
-        'prod_summary',
+        'prod_partno',
         'label_id',
-        'area_id',
         'manufacturer_id',
+        'unit_id',
         'pref_id'
     ];
 

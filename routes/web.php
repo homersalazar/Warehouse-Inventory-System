@@ -8,6 +8,7 @@ use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
 use App\Models\Transaction;
@@ -100,11 +101,13 @@ Route::middleware('checkLoggedIn')->group(function() {
     Route::group(['prefix' => 'product'], function () {
         Route::get('/add_inventory', [ProductController::class, 'add_inventory'])->name('product.add_inventory');
         Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
+        
         Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
         Route::post('/store', [ProductController::class, 'store'])->name('product.store');
         
         Route::get('/remove_inventory', [ProductController::class, 'remove_inventory'])->name('product.remove_inventory');
         Route::post('/remove/autocomplete', [ProductController::class, 'remove_autocomplete'])->name('product.remove_autocomplete');
+        
         Route::middleware('role:0')->group(function () {
             Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
             Route::patch('update/{id}', [ProductController::class, 'update'])->name('product.update');
@@ -141,3 +144,8 @@ Route::middleware('checkLoggedIn')->group(function() {
     });
 });
 
+Route::middleware('checkLoggedIn')->group(function() {
+    Route::group(['prefix' => 'unit'], function () {
+        Route::post('/autocomplete', [UnitController::class, 'autocomplete'])->name('unit.autocomplete');
+    });
+});

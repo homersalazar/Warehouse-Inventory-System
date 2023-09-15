@@ -10,16 +10,17 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id',
+        'prod_sku',
         'tran_date',
         'tran_option',
         'tran_quantity',
         'tran_unit',
         'tran_serial',
-        'tran_comment',
+        'tran_remarks',
         'tran_action',
         'tran_drno',
         'tran_mpr',
+        'area_id',
         'location_id',
         'user_id'
     ];

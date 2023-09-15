@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
+    <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <p class="mt-5 border-b-2 text-xl sm:text-2xl font-bold">Add New Inventory</p>
         <form action="{{ route('product.store') }}" method="POST" id="universal_form">
             {{ csrf_field() }}
@@ -17,11 +17,15 @@
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">Part Number</label>                    
-                        <input type="text" name="prod_upc" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
+                        <input type="text" name="prod_partno" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <label class="sm:w-[10rem] sm:text-right">Summary</label>                    
-                        <input type="text" name="prod_summary" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
+                    <div class="flex flex-col">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <label class="sm:w-[10rem] sm:text-right">Unit</label>
+                            <input type="text" name="unit_name" autocomplete="off" id="unit_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="hidden" name="unit_id" id="unit_id">  {{-- store id of the selected unit --}}
+                        </div>
+                        <div id="unitList" class="z-10 sm:ml-[10.8rem]"></div>                                
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
@@ -30,14 +34,6 @@
                             <input type="hidden" name="label_id" id="label_id">  {{-- store id of the selected label --}}
                         </div>
                         <div id="labelList" class="z-10 sm:ml-[10.8rem]"></div>                                
-                    </div>
-                    <div class="flex flex-col">
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Area</label>
-                            <input type="text" name="area_name" autocomplete="off" id="area_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
-                            <input type="hidden" name="area_id" id="area_id">  {{-- store id of the selected area --}}
-                        </div>
-                        <div id="areaList" class="z-10 sm:ml-[10.8rem]"></div>                                
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
@@ -61,7 +57,7 @@
             <div class="flex flex-col gap-5 mt-2 sm:ml-20 p-6">
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">Transaction Date</label>                    
-                    <input type="date" name="tran_date" value="{{ date("Y-m-d") }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" required>    
+                    <input type="date" name="tran_date" value="{{ date("Y-m-d") }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">Transaction</label>                    
@@ -84,6 +80,14 @@
                     <label class="sm:w-[10rem] sm:text-right">Quantity</label>                    
                     <input type="number" name="tran_quantity" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
                 </div>
+                <div class="flex flex-col">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label class="sm:w-[10rem] sm:text-right">Area</label>
+                        <input type="text" name="area_name" autocomplete="off" id="area_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                        <input type="hidden" name="area_id" id="area_id">  {{-- store id of the selected area --}}
+                    </div>
+                    <div id="areaList" class="z-10 sm:ml-[10.8rem]"></div>                                
+                </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label id="cost" class="sm:w-[10rem] sm:text-right">Unit Cost (&#8369;)</label>                    
                     <label id="refund" class="sm:w-[10rem] sm:text-right hidden">Unit Refund (&#8369;)</label>                    
@@ -94,8 +98,8 @@
                     <input type="text" name="tran_serial" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">Comments</label>                    
-                    <input type="text" name="tran_comment" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
+                    <label class="sm:w-[10rem] sm:text-right">Remarks</label>                    
+                    <input type="text" name="tran_remarks" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
                 </div>
                 <div class="flex flex-flex gap-3">
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Save</button>
@@ -137,6 +141,8 @@
                 $('#manufacturer_id').val('');
             } else if (Input == 'label_name') {
                 $('#label_id').val('');
+            }else if (Input == 'unit_name') {
+                $('#unit_id').val('');
             }
         }
 
@@ -144,6 +150,7 @@
             var area = $("#areaList");
             var manufacturer = $("#manufacturerList");
             var label = $("#labelList");
+            var unit = $("#unitList");
 
             if (!area.is(e.target) && area.has(e.target).length === 0){
                 area.hide();
@@ -154,7 +161,34 @@
             if (!label.is(e.target) && label.has(e.target).length === 0){
                 label.hide();
             }
+            if (!unit.is(e.target) && unit.has(e.target).length === 0){
+                unit.hide();
+            }
         });
+
+        // autocomplete unit
+        $(document).ready(function(){
+            $('#unit_name').keyup(function(){
+                var query = $(this).val();
+                if(query != ''){
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('unit.autocomplete') }}",
+                        method:"POST",
+                        data:{query:query , _token:_token},
+                        success:function(data){
+                            $('#unitList').fadeIn();
+                            $('#unitList').html(data);
+                        }
+                    });
+                }
+            });
+        });
+        const fill_unit = (unit_id, unit_name) => {
+            $('#unit_id').val(unit_id);
+            $('#unit_name').val(unit_name);
+            $('#unitList').fadeOut();  
+        }
 
         // autocomplete label
         $(document).ready(function(){
