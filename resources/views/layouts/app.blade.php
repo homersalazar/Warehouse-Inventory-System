@@ -132,6 +132,10 @@
         <script>
             $.notify("{{ session('error') }}", "error");
         </script>
+    @elseif (session('info'))
+        <script>
+            $.notify("{{ session('info') }}", "info");
+        </script>
     @endif
 
     @yield('content')    

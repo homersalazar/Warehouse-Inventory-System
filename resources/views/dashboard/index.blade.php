@@ -47,7 +47,11 @@
           <th class="px-6 py-4">
             <select type="text" name="" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
               {{-- <option selected>Choose Location</option> --}}
+              @if (session('role') == 0)
+
+              @elseif (session('role') == 1)
                 <option value="{{ $user->location->id }}">{{ $user->location->loc_name }}</option>
+              @endif
             </select>    
           </th>
         </tr>

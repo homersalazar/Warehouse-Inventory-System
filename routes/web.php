@@ -34,11 +34,15 @@ Route::resource('/dashboard', DashboardController::class)->middleware('checkLogg
 Route::group(['prefix' => 'user'], function () {
     Route::get('/login', [UserController::class, 'show_login'])->name('user.login');
     Route::post('/login', [UserController::class, 'login'])->name('login');
+
     Route::get('/register', [UserController::class, 'show_register'])->name('user.register');
     Route::post('/register', [UserController::class, 'register'])->name('register');
+
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
     Route::get('/profile/{id}', [UserController::class, 'profile'])->name('user.profile');
     Route::patch('/profile/update/{id}', [UserController::class, 'profile_update'])->name('user.profile_update');
+    
     Route::middleware(['checkLoggedIn' , 'role:0'])->group(function() {
         Route::get('/', [UserController::class, 'index'])->name('user.index');
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('user.edit');

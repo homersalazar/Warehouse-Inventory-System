@@ -3,7 +3,7 @@
 @section('content')
     <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Users</h1>
-        <div class="mt-5">
+        <div class="my-5">
             <a href="" class="bg-green-600 text-white px-3 rounded-md py-2">New User</a>
         </div>
         <div class="relative">
@@ -47,8 +47,7 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-                                {{-- {{  $user->locations }} --}}
-                                {{  $user->role == 0 ? "All Location" : $user->locations }}
+                                {{  $user->role == 0 ? "All Location" : $user->location->loc_name }}
                             </td>
                             <td class="px-6">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
@@ -114,7 +113,7 @@
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
-                                {{-- {{ $user->locations->loc_name }} --}}
+                                {{ $user->location->loc_name }}
                             </td>
                             <td class="px-6">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">

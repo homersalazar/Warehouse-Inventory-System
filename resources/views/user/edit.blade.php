@@ -36,8 +36,8 @@
                     <div class="flex flex-col">
                         <p class="sm:ml-6">Enter transactions at the specified locations.</p>
                         @foreach ($locations as $location)
-                            <div class="flex items-center sm:ml-16 mt-4">
-                                <input type="checkbox" form="user_form" name="loc_id[]" value="{{ $location->id }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center ml-5 sm:ml-16 mt-4">
+                                <input type="radio" form="user_form" name="loc_id[]" value="{{ $location->id }}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" {{ $location->id == $user->location_id ? "checked" : "" }}>
                                 <label class="ml-2 text-sm font-medium">{{ $location->loc_name }}</label>
                             </div>
                         @endforeach                     
