@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col pt-5 px-5 sm:px-10 w-full mb-10">
+    <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Areas</h1>
         <div class="my-5">
             <a href="{{ route('area.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New Area</a>
@@ -14,7 +14,7 @@
                             Name
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Action
+                            
                         </th>
                     </tr>
                 </thead>
@@ -24,7 +24,7 @@
                             <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
                                 {{ ucwords($area->area_name) }}
                             </td>
-                            <td class="px-6">
+                            <td class="px-6 text-right">
                                 <a href="{{ route('area.edit', ['id' => $area->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
                                     <i class="fa-regular text-blue-600 fa-pen-to-square"></i>
                                 </a>

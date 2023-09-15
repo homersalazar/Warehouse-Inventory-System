@@ -74,7 +74,7 @@ class PreferenceController extends Controller
         $pref = Preference::find($id);
         $pref->pref_value = $request->pref_value;
         $pref->save();    
-        return redirect()->route('preference.index')->with('success', 'Value has been updated successfully.');
+        return redirect()->route('preference.index')->with('success', 'Preference has been updated successfully.');
 
     }
 

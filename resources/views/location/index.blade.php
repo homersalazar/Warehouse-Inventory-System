@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col pt-5 px-5 sm:px-10">
+    <div class="flex flex-col pt-5 px-2 sm:px-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Locations</h1>
         <div class="my-5">
             <a href="{{ route('location.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2 ">Add New Location</a>
