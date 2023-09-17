@@ -117,8 +117,8 @@ class TransactionController extends Controller
                 ->whereIn('tran_action',  [0, 2])
                 ->sum('tran_quantity');
             $transactionRemove = Transaction::whereLocation_id($location->id)
-            ->where('prod_sku', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3, 4, 5])
+                ->where('prod_sku', $product->prod_sku)
+                ->whereIn('tran_action',  [1, 3, 4, 5])
                 ->sum('tran_quantity');
             $transferAdd = Pending::where('tran_from', $location->id)
                 ->where('prod_sku', $product->prod_sku)
@@ -127,12 +127,13 @@ class TransactionController extends Controller
             $total = $total_stock <= 0 ? 0 : $total_stock;
             $totals[$location->id] = $total;
         }
+
         $status = 4; // pending
-        $pending = Pending::whereTran_action($status)
-        ->whereProd_sku($id)
-        ->where('tran_from', $user->location_id)
-        ->orWhere('location_id', $user->location_id)
-        ->get();
+        $pending = Pending::where('tran_action', $status)
+            ->where('prod_sku', $product)
+            ->where('tran_from', $user->location_id)
+            ->orWhere('location_id', $user->location_id)
+            ->get();
         return view('transaction.item', 
         compact(
             'product', 
@@ -154,21 +155,21 @@ class TransactionController extends Controller
         ]);
         
         $location = Location::find($request->current_location);
-        $total_stock = Transaction::whereLocation_id($location->id)
+        $stockIn = Transaction::whereLocation_id($location->id)
             ->whereProd_sku($request->prod_sku)
             ->whereIn('tran_action', [0, 2])
-            ->sum('tran_quantity')
-        - Transaction::whereLocation_id($location->id)
+            ->sum('tran_quantity');
+        $stockOut =  Transaction::whereLocation_id($location->id)
             ->whereProd_sku($request->prod_sku)
             ->whereIn('tran_action', [1, 3, 4, 5])
-            ->sum('tran_quantity')
-        - Pending::whereLocation_id($location->id)
+            ->sum('tran_quantity');
+        $pending = Pending::whereLocation_id($location->id)
             ->whereProd_sku($request->prod_sku)
             ->sum('tran_quantity');
-        
-        if ($request->tran_quantity <= $total_stock) {
+        $totalStock = $stockIn - $stockOut - $pending;
+        if ($request->tran_quantity <= $totalStock) {
             $transfer = new Pending;
-            $transfer->prod_id = $request->prod_sku;
+            $transfer->prod_sku = $request->prod_sku;
             $transfer->tran_date = $request->tran_date;
             $transfer->tran_quantity = $request->tran_quantity;
             $transfer->tran_action = 4;
@@ -177,27 +178,97 @@ class TransactionController extends Controller
             $transfer->location_id = $request->loc_id;
             $transfer->tran_drno = $request->tran_drno;
             $transfer->tran_mpr = $request->tran_mpr;
-            $transfer->tran_comment = $request->tran_comment;
+            $transfer->tran_remarks = $request->tran_remarks;
             $transfer->tran_serial = $request->tran_serial;
             $transfer->save();
         
             return redirect()->back()->with('success', 'Transfer created successfully.');
         } else {
-            return redirect()->back()->with('error', 'Insufficient stock.');
+            return redirect()->back()->with('error', 'Sorry, but we dont have enough stock.');
         }
     }
 
+    //receive transfer  
+    public function transfer_item($id)
+    {
+        try {
+            $tranfer_item = Pending::find($id);        
+            $transferInAction = 2; // transfer - In
+            $transferOutAction = 3; // transfer - out
+            $today = date('Y-m-d');
+            $transferIn = Transaction::updateOrCreate([
+                'prod_sku' => $tranfer_item->prod_sku,
+                'tran_date' => $today,
+                'tran_quantity' => $tranfer_item->tran_quantity,
+                'tran_drno' => $tranfer_item->tran_drno,
+                'tran_mpr' => $tranfer_item->tran_mpr,
+                'tran_serial' => $tranfer_item->tran_serial,
+                'tran_remarks' => $tranfer_item->tran_remarks,
+                'tran_action' => $transferInAction,
+                'location_id' =>  $tranfer_item->location_id,
+                'user_id' => auth()->user()->id
+            ]);
+            $transferOut = Transaction::updateOrCreate([
+                'prod_sku' => $tranfer_item->prod_sku,
+                'tran_date' => $today,
+                'tran_quantity' => $tranfer_item->tran_quantity,
+                'tran_drno' => $tranfer_item->tran_drno,
+                'tran_mpr' => $tranfer_item->tran_mpr,
+                'tran_serial' => $tranfer_item->tran_serial,
+                'tran_remarks' => $tranfer_item->tran_remarks,
+                'tran_action' => $transferOutAction,
+                'location_id' =>  $tranfer_item->tran_from,
+                'user_id' => $tranfer_item->user_id
+            ]);
+            $tranfer_item->delete();
+            return redirect()->back()
+            ->with('success', 'Transfer added successfully.');
+        } catch (\Exception $e) {
+            // Handle exceptions, log errors, and return an error response
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    
 
 
 
 
 
+    // admin
+    public function edit($id, $loc_id)
+    {
+        $user = Auth::user();
+        $product = Product::find($id);
+        $location = Location::find($loc_id);
+        $location_name = Location::all();
+        $transactionAdd = Transaction::where('location_id', $loc_id)
+            ->where('prod_sku', $product->prod_sku)
+            ->whereIn('tran_action',  [0, 2])
+            ->sum('tran_quantity');
+        $transactionRemove = Transaction::where('location_id', $loc_id)
+            ->where('prod_sku', $product->prod_sku)
+            ->whereIn('tran_action',  [1, 3, 4, 5])
+            ->sum('tran_quantity');
+        $transferAdd = Pending::where('tran_from', $loc_id)
+            ->where('prod_sku', $product->prod_sku)
+            ->sum('tran_quantity');
+        $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
+        $total = $total_stock <= 0 ? 0 : $total_stock;
+        $transactionArea = Transaction::where('prod_sku', $id)
+            ->where('location_id', $loc_id)   
+            ->whereNotNull('area_id')
+            ->limit(1)
+            ->oldest()
+            ->get();
+        return view('transaction.edit', 
+        compact('product', 'user', 'total', 'location' , 'location_name', 'loc_id', 'transactionArea'));    
+    }
 
     public function item($id, $loc_id)
     {
         $user = Auth::user();
         $product = Product::find($id);
-        $transactions = Transaction::where('product_id', $id)->get();
+        $transactions = Transaction::where('prod_sku', $id)->get();
 
         //for transfer form
         $transfer_local = Location::where('id', '!=', $loc_id)->get();
@@ -207,16 +278,16 @@ class TransactionController extends Controller
         $totals = [];
         foreach ($locations as $location) {
             $transactionAdd = Transaction::where('location_id', $location->id)
-                ->where('product_id', $product->prod_sku)
+                ->where('prod_sku', $product->prod_sku)
                 ->whereIn('tran_action',  [0, 2])
                 ->sum('tran_quantity');
             
             $transactionRemove = Transaction::where('location_id', $location->id)
-                ->where('product_id', $product->prod_sku)
+                ->where('prod_sku', $product->prod_sku)
                 ->whereIn('tran_action',  [1, 3, 4, 5])
                 ->sum('tran_quantity');
             $transferAdd = Pending::where('tran_from', $location->id)
-            ->where('product_id', $product->prod_sku)
+            ->where('prod_sku', $product->prod_sku)
             ->sum('tran_quantity');
             $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
             $total = $total_stock <= 0 ? 0 : $total_stock;
@@ -226,77 +297,26 @@ class TransactionController extends Controller
         }
         $status = 4; // pending
         $pending = Pending::whereTran_action($status)
-        ->whereProduct_id($id)
-        ->where('tran_from', $loc_id)
-        ->orWhere('location_id', $loc_id)
-        ->get();  
-        return view('transaction.item', compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id', 'user', 'pending'));
-
-    }
-
-
-    public function edit($id, $loc_id)
-    {
-        $user = Auth::user();
-        $product = Product::find($id);
-        $location = Location::find($loc_id);
-        $location_name = Location::all();
-        $transactionAdd = Transaction::where('location_id', $loc_id)
-            ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [0, 2])
-            ->sum('tran_quantity');
-        $transactionRemove = Transaction::where('location_id', $loc_id)
-            ->where('product_id', $product->prod_sku)
-            ->whereIn('tran_action',  [1, 3, 4, 5])
-            ->sum('tran_quantity');
-        $transferAdd = Pending::where('tran_from', $loc_id)
-            ->where('product_id', $product->prod_sku)
-            ->sum('tran_quantity');
-        $total_stock = $transactionAdd - $transactionRemove - $transferAdd;
-        $total = $total_stock <= 0 ? 0 : $total_stock;
-        return view('transaction.edit', compact('product', 'user', 'total', 'location' , 'location_name', 'loc_id'));    
-        
+            ->whereProd_sku($id)
+            ->where('tran_from', $loc_id)
+            ->orWhere('location_id', $loc_id)
+            ->get();  
+        return view('transaction.item', 
+        compact('product', 'totals', 'transactions', 'transfer_local', 'current_location', 'loc_id', 'user', 'pending'));
     }
 
 
 
 
-    public function transfer_item($id)
-    {
-        $transactionAction =  5;
-        $tranfer_item = Pending::find($id);        
-        $transferInAction = 2; // transfer - In
-        $transferOutAction = 3; // transfer - out
-        $today = date('Y-m-d');
-        $transferIn = Transaction::updateOrCreate([
-            'product_id' => $tranfer_item->product_id,
-            'tran_date' => $today,
-            'tran_quantity' => $tranfer_item->tran_quantity,
-            'tran_drno' => $tranfer_item->tran_drno,
-            'tran_mpr' => $tranfer_item->tran_mpr,
-            'tran_serial' => $tranfer_item->tran_serial,
-            'tran_comment' => $tranfer_item->tran_comment,
-            'tran_action' => $transferInAction,
-            'location_id' =>  $tranfer_item->location_id,
-            'user_id' => auth()->user()->id
-        ]);
-        $transferOut = Transaction::updateOrCreate([
-            'product_id' => $tranfer_item->product_id,
-            'tran_date' => $today,
-            'tran_quantity' => $tranfer_item->tran_quantity,
-            'tran_drno' => $tranfer_item->tran_drno,
-            'tran_mpr' => $tranfer_item->tran_mpr,
-            'tran_serial' => $tranfer_item->tran_serial,
-            'tran_comment' => $tranfer_item->tran_comment,
-            'tran_action' => $transferOutAction,
-            'location_id' =>  $tranfer_item->tran_from,
-            'user_id' => $tranfer_item->user_id
-        ]);
-        $tranfer_item->delete();
-        return redirect()->back()
-        ->with('success', 'Transfer added successfully.');
-    } 
 
+
+
+
+
+
+
+
+    
     public function update(Request $request, $id)
     {   
         $request->validate([

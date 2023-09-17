@@ -40,9 +40,13 @@ class Transaction extends Model
         return $this->hasMany(Product::class);
     }
 
-
     public function area()
     {
         return $this->belongsTo(Area::class);
+    }
+
+    public function pending()
+    {
+        return $this->hasMany(Pending::class, 'prod_sku');
     }
 }

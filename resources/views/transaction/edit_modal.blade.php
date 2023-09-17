@@ -1,4 +1,4 @@
-<div id="edit_transaction" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center py-5 sm:py-0">
+<div id="edit_transaction" data-modal-target="edit_transaction" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center py-5 sm:py-0">
     <div class="fixed mx-auto max-w-2xl inset-0 flex items-center justify-center px-2 sm:px-0">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 w-full">
@@ -34,6 +34,10 @@
                             <label class="block w-full sm:w-1/4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
                             <input type="number" name="tran_quantity" id="tran_quantity" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                         </div> 
+                        {{-- <div class="flex flex-col sm:flex-row mb-2">
+                            <label class="block w-full sm:w-1/4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Area</label>
+                            <input type="number" name="area_id" id="area_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                        </div>  --}}
                     </div>
                 </form>
             </div>

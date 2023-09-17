@@ -14,15 +14,19 @@
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">SKU</label>                    
-                        <input type="text" name="prod_sku" value="SKU0{{ $product->prod_sku }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" readonly placeholder="auto generated">    
+                        <input type="text" name="prod_sku" value="SKU0{{ $product->prod_sku }}" class="border border-gray-300 bg-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" readonly placeholder="auto generated">    
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">Part Number</label>                    
-                        <input type="text" name="prod_upc" value="{{ ucwords($product->prod_upc) }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
+                        <input type="text" name="prod_partno" value="{{ strtoupper($product->prod_partno) }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" placeholder="if available">    
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <label class="sm:w-[10rem] sm:text-right">Summary</label>                    
-                        <input type="text" name="prod_summary" value="{{ ucwords($product->prod_summary) }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">    
+                    <div class="flex flex-col">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <label class="sm:w-[10rem] sm:text-right">Unit</label>
+                            <input type="text" name="unit_name" value="{{ strtoupper($product->unit->unit_name) }}" autocomplete="off" id="unit_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="hidden" name="unit_id" id="unit_id" value="{{ $product->unit_id }}">  {{-- store id of the selected label --}}
+                        </div>
+                        <div id="unitList" class="z-10 sm:ml-[10.8rem]"></div>                                
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
@@ -31,14 +35,6 @@
                             <input type="hidden" name="label_id" id="label_id" value="{{ $product->label_id }}">  {{-- store id of the selected label --}}
                         </div>
                         <div id="labelList" class="z-10 sm:ml-[10.8rem]"></div>                                
-                    </div>
-                    <div class="flex flex-col">
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">Area</label>
-                            <input type="text" name="area_name" autocomplete="off" id="area_name" value="{{ $product->area->area_name }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
-                            <input type="hidden" name="area_id" id="area_id" value="{{ $product->area_id }}">  {{-- store id of the selected area --}}
-                        </div>
-                        <div id="areaList" class="z-10 sm:ml-[10.8rem]"></div>                                
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
@@ -85,6 +81,8 @@
                 $('#manufacturer_id').val('');
             } else if (Input == 'label_name') {
                 $('#label_id').val('');
+            }else if (Input == 'unit_name') {
+                $('#unit_id').val('');
             }
         }
 
@@ -92,6 +90,7 @@
             var area = $("#areaList");
             var manufacturer = $("#manufacturerList");
             var label = $("#labelList");
+            var unit = $("#unitList");
 
             if (!area.is(e.target) && area.has(e.target).length === 0){
                 area.hide();
@@ -101,6 +100,9 @@
             }
             if (!label.is(e.target) && label.has(e.target).length === 0){
                 label.hide();
+            }
+            if (!unit.is(e.target) && unit.has(e.target).length === 0){
+                unit.hide();
             }
         });
 
@@ -174,6 +176,30 @@
             $('#manufacturer_id').val(manufacturer_id);
             $('#manufacturer_name').val(manufacturer_name);
             $('#manufacturerList').fadeOut();  
+        }
+
+        // autocomplete unit
+        $(document).ready(function(){
+            $('#unit_name').keyup(function(){
+                var query = $(this).val();
+                if(query != ''){
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('unit.autocomplete') }}",
+                        method:"POST",
+                        data:{query:query , _token:_token},
+                        success:function(data){
+                            $('#unitList').fadeIn();
+                            $('#unitList').html(data);
+                        }
+                    });
+                }
+            });
+        });
+        const fill_unit = (unit_id, unit_name) => {
+            $('#unit_id').val(unit_id);
+            $('#unit_name').val(unit_name);
+            $('#unitList').fadeOut();  
         }
     </script>
 @endsection

@@ -35,11 +35,16 @@ class Product extends Model
 
     public function pending()
     {
-        return $this->hasMany(Pending::class);
+        return $this->hasMany(Pending::class, 'prod_sku');
     }
 
     public function preference()
     {
         return $this->belongsTo(Preference::class, 'pref_id');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

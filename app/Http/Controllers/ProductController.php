@@ -188,13 +188,12 @@ class ProductController extends Controller
             $label->save();
             $labels_id = $label->id;
         }
-        if (empty($request->area_id) && !empty($request->area_name)) {
-            $area = Area::updateOrCreate([
-                'area_name' => ucwords($request->area_name),
-                'area_status' => 0,
+        if (empty($request->unit_id) && !empty($request->unit_name)) {
+            $unit = Unit::updateOrCreate([
+                'unit_name' => ucwords($request->unit_name)
             ]);
-            $area->save();
-            $areas_id = $area->id;
+            $unit->save();
+            $units_id = $unit->id;
         }
 
         if (empty($request->manufacturer_id) && !empty($request->manufacturer_name)) {
@@ -209,11 +208,10 @@ class ProductController extends Controller
         ['id' => $id],
         [
             'prod_name' => $request->prod_name,
-            'prod_upc' => $request->prod_upc,
-            'prod_summary' => $request->prod_summary,
-            'label_id' => $request->label_id != '' ?  $request->label_id : $labels_id,
-            'area_id' => $request->area_id != '' ?  $request->area_id : $areas_id,
-            'manufacturer_id' => $request->manufacturer_id != '' ?  $request->manufacturer_id : $manufacturers_id,
+            'prod_partno' => $request->prod_partno,
+            'label_id' => !empty($request->label_id) ?  $request->label_id : $labels_id,
+            'unit_id' => !empty($request->unit_id) ? $request->unit_id : $units_id,
+            'manufacturer_id' => !empty($request->manufacturer_id) ?  $request->manufacturer_id : $manufacturers_id,
         ]);
         return redirect()->route('product.add_inventory')
         ->with('success', 'Product updated successfully.');

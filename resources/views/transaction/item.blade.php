@@ -93,7 +93,7 @@
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <label class="sm:w-[10rem] sm:text-right">$emarks</label>
+                            <label class="sm:w-[10rem] sm:text-right">Remarks</label>
                             <input type="text" name="tran_remarks"
                                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                         </div>
@@ -119,7 +119,11 @@
                 <label class="font-bold">SKU</label>
                     SKU0{{ $product->prod_sku }}
                 <label class="font-bold mt-2">Area</label>
-                    {{ strtoupper($transactionArea->first()->area->area_name) }}
+                    @if (empty($transactionArea->area_id))
+                    
+                    @else
+                        {{ strtoupper($transactionArea->first()->area->area_name) }}
+                    @endif
                 <label class="font-bold mt-2">Manufacturer</label>
                     {{ ucwords($product->manufacturer->manufacturer_name) }}
             </div>
@@ -239,7 +243,7 @@
                             <td class="px-6">
                                 <div class="flex flex-row">
                                     @if ($row->user_id == session('ID') || session('role') == 0)
-                                        <button data-modal-target="edit_transaction" onclick="edit_transaction('{{ $row->id }}', '{{ $row->tran_date }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}' , '{{ $row->tran_quantity }}')" type="button" class="{{ $row->tran_action == 2 || $row->tran_action == 3 ? 'hidden' : '' }} px-3 py-1 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
+                                        <button data-modal-target="edit_transaction" onclick="edit_transaction('{{ $row->id }}', '{{ $row->tran_date }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}' , '{{ $row->tran_quantity }}' , '{{ $row->area_id }}')" type="button" class="{{ $row->tran_action == 2 || $row->tran_action == 3 ? 'hidden' : '' }} px-3 py-1 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                     @endif
@@ -330,7 +334,7 @@
                                         </button>
                                     @endif
                                     @if ($row->locationTo == $current_location || session('role') == 0)
-                                        <button onclick="received_item('{{ $row->id }}' , '{{ $row->product->prod_name }}')" type="button" class="py-2 px-3 text-sm font-medium text-green-900 focus:outline-none bg-white rounded-lg border border-green-200 hover:bg-green-100 hover:text-green-700 focus:z-10 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700">
+                                        <button type="submit" onclick="received_item('{{ $row->id }}' , '{{ $row->product->prod_name }}')" class="py-2 px-3 text-sm font-medium text-green-900 focus:outline-none bg-white rounded-lg border border-green-200 hover:bg-green-100 hover:text-green-700 focus:z-10 focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700">
                                             <i class="fa-solid fa-cart-arrow-down"></i>
                                         </button>
                                     @endif
@@ -378,7 +382,8 @@
             $("#tran_date").val(tran_date);
             $("#tran_drno").val(tran_drno);
             $("#tran_mpr").val(tran_mpr);
-            $("#tran_quantity").val(tran_quantity);
+            $("#tran_quantity").val(tran_quantity); 
+            // $("#area_id").val($area_id);
 
             // Submit the form data via AJAX
             $("#edit_form").off("submit").on("submit", function (e) {
@@ -403,6 +408,7 @@
             const modal = document.getElementById("edit_transaction");
             modal.style.display = "none";
         }
+        
 
         const destroy_transaction = (tran_id) => {
             var proceed = confirm(`This action will proceed this delete.  Are you sure?`);
@@ -424,15 +430,15 @@
             }
         }
 
-        const destroy_transfer = (tran_id) => {
-            var proceed = confirm(`This action will proceed this delete.  Are you sure?`);
-            if (proceed) {
+        const received_item = (received_id, prodName) => {
+            var proceed = confirm(`This action will proceed this transfer ${prodName}.  Are you sure?`);
+            if(proceed){
                 $.ajax({
-                    url: `/transaction/destroy/${tran_id}`, 
-                    type: "DELETE",
+                    url: `/transaction/transfer_item/${received_id}`, 
+                    type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}',
-                        id: tran_id,
+                        id: received_id,
                     },
                     success: function(data) {
                         window.location.reload(); 
@@ -444,15 +450,15 @@
             }
         }
 
-        const received_item = (transfer_id, prod_name) => {
-            var proceed = confirm(`This action will proceed this transfer ${prod_name}.  Are you sure?`);
+        const destroy_transfer = (tran_id) => {
+            var proceed = confirm(`This action will proceed this delete.  Are you sure?`);
             if (proceed) {
                 $.ajax({
-                    url: `/transaction/transfer_item/${transfer_id}`, 
-                    type: "POST",
+                    url: `/transaction/destroy/${tran_id}`, 
+                    type: "DELETE",
                     data: {
                         _token: '{{ csrf_token() }}',
-                        id: transfer_id,
+                        id: tran_id,
                     },
                     success: function(data) {
                         window.location.reload(); 

@@ -13,7 +13,7 @@ class Pending extends Model
         'tran_date',
         'tran_quantity',
         'tran_serial',
-        'tran_comment',
+        'tran_remarks',
         'tran_action',
         'tran_drno',
         'tran_mpr',
@@ -39,12 +39,12 @@ class Pending extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->belongsTo(Transaction::class, 'prod_sku');
     }
 
     public function product()
     {
-        return $this->belongsTo(product::class);
+        return $this->belongsTo(product::class, 'prod_sku');
     }
 
     

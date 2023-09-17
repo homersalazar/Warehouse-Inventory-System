@@ -109,7 +109,7 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::post('/remove/autocomplete', [ProductController::class, 'remove_autocomplete'])->name('product.remove_autocomplete');
         
         Route::middleware('role:0')->group(function () {
-            Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
+            Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit'); 
             Route::patch('update/{id}', [ProductController::class, 'update'])->name('product.update');
         });
     });
@@ -123,10 +123,12 @@ Route::middleware('checkLoggedIn')->group(function() {
         Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item'); // user/admin
         Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
 
-
         Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
-        Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
+        
         Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
+        Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
+
+
         Route::delete('/destroy/{id}', [TransactionController::class, 'tranfer_destroy'])->name('transaction.destroy');
 
         Route::get('remove_show/{id}', [TransactionController::class, 'remove_show'])->name('transaction.remove_show');
