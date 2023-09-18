@@ -45,10 +45,21 @@
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5"
                         required>
                 </div>
+                @if ($transactionArea->isNotEmpty())
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label class="sm:w-[10rem] sm:text-right">Area</label>
+                        <input type="text" name="" value="{{ strtoupper($transactionArea->first()->area->area_name) }}"
+                            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5 bg-gray-200" readonly>
+                    </div>
+                @endif
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">Area</label>
-                    <input type="text" name="" value="{{ $product->area->area_name }}"
-                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5 bg-gray-200" readonly>
+                    <label class="sm:w-[10rem] sm:text-right">Equipment</label>
+                    <select id="equipmentNo" name="equipmentNo" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                        <option value="" selected>Choose Equipment</option>
+                        @foreach ($equipment as $equip)
+                            <option value="{{ $equip->id }}">{{ $equip->equip_unit }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <label class="sm:w-[10rem] sm:text-right">DR No.</label>
@@ -61,12 +72,12 @@
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <label class="sm:w-[10rem] sm:text-right">Comments</label>
-                    <input type="text" name="tran_comment"
+                    <label class="sm:w-[10rem] sm:text-right">Remarks</label>
+                    <input type="text" name="tran_remarks"
                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
                 </div>
                 <div class="flex flex-flex gap-3">
-                    <input type="hidden" name="product_ids" id="product_ids" value="{{ $product->prod_sku }}">
+                    <input type="hidden" name="prod_sku" id="prod_sku" value="{{ $product->prod_sku }}">
                     @if (session('role') == 1)
                         <input type="hidden" name="location_id" value="{{ $user->location->id }}">
                     @else

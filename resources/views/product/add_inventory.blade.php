@@ -73,18 +73,3 @@
             });
     </script>
 @endsection
-
-{{-- // $.ajax({
-    //     url: `{{ route('transaction.edit')/${sku_id} }}`,
-    //     type: "POST",
-    //     data: {
-    //         loc_id: loc_id,
-    //         _token: '{{ csrf_token() }}', // Include CSRF token if needed
-    //     },
-    //     success: function (data) {
-    //         // Handle success response if needed
-    //     },
-    //     error: function (xhr, textStatus, errorThrown) {
-    //         // Handle error response if needed
-    //     }
-    // }); --}}

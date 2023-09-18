@@ -268,7 +268,7 @@ class ProductController extends Controller
                                     SKU0'.$row->prod_sku.'
                                 </td>
                                 <td class="px-6 max-sm:hidden">
-                                    '.ucwords($row->prod_upc).'
+                                    '.ucwords($row->prod_partno).'
                                 </td>
                                 <td class="px-6">
                                     '.ucwords($row->manufacturer->manufacturer_name).'

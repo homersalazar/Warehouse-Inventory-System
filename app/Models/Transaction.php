@@ -21,6 +21,7 @@ class Transaction extends Model
         'tran_drno',
         'tran_mpr',
         'area_id',
+        'equipment_id',
         'location_id',
         'user_id'
     ];

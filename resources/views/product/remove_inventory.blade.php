@@ -50,24 +50,25 @@
             });
         }
         
+        //user
         $(document).ready(function(){
-                $('#product_name').keyup(function(){
-                    var query = $(this).val();
-                    if(query != ''){
-                        var _token = $('input[name="_token"]').val();
-                        $.ajax({
-                            url:"{{ route('product.remove_autocomplete') }}",
-                            method:"POST",
-                            data:{
-                                query:query ,
-                                _token:_token},
-                            success:function(data){
-                                $('#productList').fadeIn();
-                                $('#productList').html(data);
-                            }
-                        });
-                    }
-                });
+            $('#product_name').keyup(function(){
+                var query = $(this).val();
+                if(query != ''){
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url:"{{ route('product.remove_autocomplete') }}",
+                        method:"POST",
+                        data:{
+                            query:query ,
+                            _token:_token},
+                        success:function(data){
+                            $('#productList').fadeIn();
+                            $('#productList').html(data);
+                        }
+                    });
+                }
             });
+        });
     </script>
 @endsection

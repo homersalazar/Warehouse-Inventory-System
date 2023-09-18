@@ -133,6 +133,17 @@
         </div>
         <div class="px-2 sm:px-10 mb-4">
             <p class="py-5 text-xl sm:text-2xl font-bold">Transactions</p>
+            @if (session('role') == 0)
+                <div class="flex flex-row gap-2 py-2">
+                    <label class="mt-2">Location:</label>
+                    <select id="locationSelect" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5">
+                        <option selected>All</option>
+                        @foreach ($locations as $loc)
+                            <option value="{{ $loc->loc_name }}">{{ $loc->loc_name }}</option>
+                        @endforeach
+                    </select>            
+                </div>
+            @endif
             <table id="transactionsTable" style="width: 100%;" class="w-full text-sm text-left mt-5">
                 <thead class="text-xs uppercase">
                     <tr>
@@ -243,7 +254,7 @@
                             <td class="px-6">
                                 <div class="flex flex-row">
                                     @if ($row->user_id == session('ID') || session('role') == 0)
-                                        <button data-modal-target="edit_transaction" onclick="edit_transaction('{{ $row->id }}', '{{ $row->tran_date }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}' , '{{ $row->tran_quantity }}' , '{{ $row->area_id }}')" type="button" class="{{ $row->tran_action == 2 || $row->tran_action == 3 ? 'hidden' : '' }} px-3 py-1 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
+                                        <button data-modal-target="edit_transaction" onclick="edit_transaction('{{ $row->id }}', '{{ $row->tran_date }}' , '{{ $row->tran_drno }}' , '{{ $row->tran_mpr }}' , '{{ $row->tran_quantity }}' , '{{ $row->tran_serial }}' , '{{ $row->tran_remarks }}')" type="button" class="{{ $row->tran_action == 2 || $row->tran_action == 3 ? 'hidden' : '' }} px-3 py-1 mr-1 text-sm font-medium text-blue-900 focus:outline-none bg-white rounded-lg border border-blue-200 hover:bg-blue-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                     @endif
@@ -373,19 +384,18 @@
             lessBtn.classList.add("hidden");
         });
 
-        const edit_transaction = (tran_id, tran_date, tran_drno, tran_mpr, tran_quantity) => {
+        const edit_transaction = (tran_id, tran_date, tran_drno, tran_mpr, tran_quantity, tran_serial, tran_remarks) => {
             const modal = document.getElementById("edit_transaction");
             modal.style.display = "block";
 
             // Populate the form fields
             $("#tran_id").val(tran_id);
             $("#tran_date").val(tran_date);
+            $("#tran_quantity").val(tran_quantity); 
             $("#tran_drno").val(tran_drno);
             $("#tran_mpr").val(tran_mpr);
-            $("#tran_quantity").val(tran_quantity); 
-            // $("#area_id").val($area_id);
-
-            // Submit the form data via AJAX
+            $("#tran_serial").val(tran_serial);
+            $("#tran_remarks").val(tran_remarks);
             $("#edit_form").off("submit").on("submit", function (e) {
                 e.preventDefault();
                 const formData = $(this).serialize(); // Serialize the form data
@@ -395,7 +405,7 @@
                     type: "POST", // Use POST to update the resource
                     data: formData,
                     success: function (data) {
-                        window.location.reload();
+                        // window.location.reload();
                     },
                     error: function (xhr, status, error) {
                         console.error(error);
@@ -471,37 +481,98 @@
         }
 
         $(document).ready(function() {
-            $('#transactionsTable').DataTable({
-                responsive: true, // Enable responsive features
-                columnDefs: [{
+            const table = $('#transactionsTable').DataTable({
+                responsive: true,
+                columnDefs: [
+                    {
                         responsivePriority: 1,
-                        targets: 0
+                        targets: 0,
                     },
                     {
                         responsivePriority: 2,
-                        targets: 11
-                    },
-                ],
-                lengthChange: false,
-                info: false
-                // searching: false
-            });
-
-            $('#pendingTable').DataTable({
-                responsive: true, // Enable responsive features
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: 0
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: 9
+                        targets: 11,
                     },
                 ],
                 lengthChange: false,
                 info: false,
-                searching: false
+                // Enable sorting for the first table
+                sorting: true,
+            });
+
+            $('#locationSelect').on('change', function () {
+                const selectedValue = $(this).val();
+                if (selectedValue === "All") {
+                    table.columns(2).search('').draw();
+                } else {
+                    table.columns(2).search(selectedValue).draw();
+                }
+            });
+
+            $('#pendingTable').DataTable({
+                responsive: true,
+                columnDefs: [
+                    {
+                        responsivePriority: 1,
+                        targets: 0,
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: 9,
+                    },
+                ],
+                lengthChange: false,
+                info: false,
+                searching: false,
+                // Disable sorting for the second table
+                sorting: false,
             });
         });
+
+        // $(document).ready(function() {
+        //     const table = $('#transactionsTable').DataTable({
+        //         responsive: true,
+        //         columnDefs: [
+        //             {
+        //                 responsivePriority: 1,
+        //                 targets: 0,
+        //             },
+        //             {
+        //                 responsivePriority: 2,
+        //                 targets: 11,
+        //             },
+        //         ],
+        //         lengthChange: false,
+        //         info: false,
+        //         sorting: true,
+        //     });
+
+        //     $('#locationSelect').on('change', function () {
+        //         const selectedValue = $(this).val();
+        //         if (selectedValue === "All") {
+        //             table.columns(2).search('').draw();
+        //         } else {
+        //             table.columns(2).search(selectedValue).draw();
+        //         }
+        //     });
+
+
+        //     $('#pendingTable').DataTable({
+        //         responsive: true, // Enable responsive features
+        //         columnDefs: [{
+        //                 responsivePriority: 1,
+        //                 targets: 0
+        //             },
+        //             {
+        //                 responsivePriority: 2,
+        //                 targets: 9
+        //             },
+        //         ],
+        //         lengthChange: false,
+        //         info: false,
+        //         searching: false
+        //         sorting: false,
+
+        //     });
+        // });
     </script>
 @endsection
