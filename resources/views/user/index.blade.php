@@ -4,7 +4,7 @@
     <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold">Manage Users</h1>
         <div class="my-5">
-            <a href="" class="bg-green-600 text-white px-3 rounded-md py-2">New User</a>
+            <a href="{{ route('user.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New User</a>
         </div>
         <div class="relative">
             <table id="activatedTable" style="width: 100%;" class="w-full text-sm text-left">
@@ -68,7 +68,7 @@
             </table>
         </div>
         <div class="flex flex-row gap-2 mt-5">
-            <a href="" class="bg-green-600 text-white px-3 rounded-md py-2">New User</a>
+            <a href="{{ route('user.create') }}" class="bg-green-600 text-white px-3 rounded-md py-2">New User</a>
             <button type="button" id="show" class="undeline text-blue-600 font-semibold">Show Inactive Users({{ $deactivated_count }})</button>
             <button type="button" id="hide" class="undeline text-blue-600 hidden font-semibold">Hide Inactive Users</button>
         </div>

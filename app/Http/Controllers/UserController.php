@@ -164,6 +164,43 @@ class UserController extends Controller
             ->with('success', ucwords($request->name) . ' has been updated successfully.');
     }
 
+    // admin create new user
+    public function create()
+    {
+        return view('user.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'fullname' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'user_role' => 'required', 
+        ]);
+    
+        $user = User::where('email', $request->input('email'))->first();
+    
+        if ($user) {
+            return redirect()->back()->with('error', 'The email address is already registered.');
+        }
+    
+        $newUser = User::create([
+            'name' => $request->input('fullname'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+            'role' => $request->input('user_role'), 
+            'status' => 0, // 0 - allowed, 1 - for approval
+            'location_id' => $request->input('loc_id'),
+        ]);
+    
+        if ($newUser) {
+            return redirect()->route('user.index')->with('success', 'User created successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Something went wrong while registering. Please try again.');
+        }
+    }
+    
 
     // user only 
     public function profile($id)
