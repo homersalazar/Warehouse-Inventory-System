@@ -110,7 +110,8 @@
                 <label class="font-bold">Average Cost (₱)</label>
                 0
                 <label class="font-bold mt-2">Label</label>
-                {{ $product->label->label_name }}
+                {{ $product->label?->label_name }}
+
             </div>
             <button id="moreBtn" type="button"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i
@@ -119,13 +120,13 @@
                 <label class="font-bold">SKU</label>
                     SKU0{{ $product->prod_sku }}
                 <label class="font-bold mt-2">Area</label>
-                    @if (empty($transactionArea->area_id))
+                    @if (empty($transactionArea->area_id))  
                     
                     @else
                         {{ strtoupper($transactionArea->first()->area->area_name) }}
                     @endif
                 <label class="font-bold mt-2">Manufacturer</label>
-                    {{ ucwords($product->manufacturer->manufacturer_name) }}
+                    {{ ucwords($product->manufacturer?->manufacturer_name) }}
             </div>
             <button id="lessBtn" type="button"
                 class="hidden text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"><i

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
@@ -29,8 +30,9 @@ use Illuminate\Support\Facades\Route;
         return view('index');
     });
 
-Route::resource('/preference', PreferenceController::class)->middleware(['checkLoggedIn', 'role:0']); // preference
-Route::resource('/dashboard', DashboardController::class)->middleware('checkLoggedIn');
+    Route::resource('/preference', PreferenceController::class)->middleware(['checkLoggedIn', 'role:0']); // preference
+    Route::resource('/equipment', EquipmentController::class)->middleware(['checkLoggedIn', 'role:0']);
+    Route::resource('/dashboard', DashboardController::class)->middleware('checkLoggedIn');
 
     Route::group(['prefix' => 'user'], function () {
         Route::get('/login', [UserController::class, 'show_login'])->name('user.login');
@@ -82,74 +84,82 @@ Route::resource('/dashboard', DashboardController::class)->middleware('checkLogg
     });
 
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'manufacturer'], function () {
-        Route::middleware('role:0')->group(function () {
-            Route::get('/', [ManufacturerController::class, 'index'])->name('manufacturer.index');
-            Route::match(['get', 'post'], '/create', [ManufacturerController::class, 'create'])->name('manufacturer.create');
-            Route::get('/edit/{id}', [ManufacturerController::class, 'edit'])->name('manufacturer.edit');
-            Route::patch('/update/{id}', [ManufacturerController::class, 'update'])->name('manufacturer.update');
-            Route::post('/deactivate/{id}', [ManufacturerController::class, 'deactivate'])->name('manufacturer.deactivate');
-            Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');    
-        });
-        Route::post('/autocomplete', [ManufacturerController::class, 'autocomplete'])->name('manufacturer.autocomplete');
-        Route::post('/store', [ManufacturerController::class, 'store'])->name('manufacturer.store');
-    });
-});
-
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'product'], function () {
-        Route::get('/add_inventory', [ProductController::class, 'add_inventory'])->name('product.add_inventory');
-        Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
-        
-        Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
-        Route::post('/store', [ProductController::class, 'store'])->name('product.store');
-        
-        Route::get('/remove_inventory', [ProductController::class, 'remove_inventory'])->name('product.remove_inventory');
-        Route::post('/remove/autocomplete', [ProductController::class, 'remove_autocomplete'])->name('product.remove_autocomplete');
-        
-        Route::middleware('role:0')->group(function () {
-            Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit'); 
-            Route::patch('update/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'manufacturer'], function () {
+            Route::middleware('role:0')->group(function () {
+                Route::get('/', [ManufacturerController::class, 'index'])->name('manufacturer.index');
+                Route::match(['get', 'post'], '/create', [ManufacturerController::class, 'create'])->name('manufacturer.create');
+                Route::get('/edit/{id}', [ManufacturerController::class, 'edit'])->name('manufacturer.edit');
+                Route::patch('/update/{id}', [ManufacturerController::class, 'update'])->name('manufacturer.update');
+                Route::post('/deactivate/{id}', [ManufacturerController::class, 'deactivate'])->name('manufacturer.deactivate');
+                Route::post('/reactivate/{id}', [ManufacturerController::class, 'reactivate'])->name('manufacturer.reactivate');    
+            });
+            Route::post('/autocomplete', [ManufacturerController::class, 'autocomplete'])->name('manufacturer.autocomplete');
+            Route::post('/store', [ManufacturerController::class, 'store'])->name('manufacturer.store');
         });
     });
-});
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'transaction'], function () {
-        Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show'); // user
-        Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store'); // user
-
-        Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item'); // user/admin
-        Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
-
-        Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
-        
-        Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
-        Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
-
-
-        Route::delete('/destroy/{id}', [TransactionController::class, 'tranfer_destroy'])->name('transaction.destroy');
-
-        Route::get('remove_show/{id}', [TransactionController::class, 'remove_show'])->name('transaction.remove_show');
-        Route::post('/remove_store', [TransactionController::class, 'remove_store'])->name('transaction.remove_store');
-        Route::middleware('role:0')->group(function () {
-            Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
-            Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
-            Route::delete('/delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
-            Route::get('remove_edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'remove_edit'])->name('transaction.remove_edit');
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'product'], function () {
+            Route::get('/add_inventory', [ProductController::class, 'add_inventory'])->name('product.add_inventory');
+            Route::post('/product/autocomplete', [ProductController::class, 'product_autocomplete'])->name('product.product_autocomplete');
+            
+            Route::get('/add_new_inventory', [ProductController::class, 'add_new_inventory'])->name('product.add_new_inventory');
+            Route::post('/store', [ProductController::class, 'store'])->name('product.store');
+            
+            Route::get('/remove_inventory', [ProductController::class, 'remove_inventory'])->name('product.remove_inventory');
+            Route::post('/remove/autocomplete', [ProductController::class, 'remove_autocomplete'])->name('product.remove_autocomplete');
+            
+            Route::middleware('role:0')->group(function () {
+                Route::get('edit/{id}', [ProductController::class, 'edit'])->name('product.edit'); 
+                Route::patch('update/{id}', [ProductController::class, 'update'])->name('product.update');
+            });
         });
     });
-});
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'label'], function () {
-        Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
-    });
-});
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'transaction'], function () {
+            Route::get('show/{id}', [TransactionController::class, 'show'])->name('transaction.show'); // user
+            Route::post('/store', [TransactionController::class, 'store'])->name('transaction.store'); // user
 
-Route::middleware('checkLoggedIn')->group(function() {
-    Route::group(['prefix' => 'unit'], function () {
-        Route::post('/autocomplete', [UnitController::class, 'autocomplete'])->name('unit.autocomplete');
+            Route::get('/item/{id}', [TransactionController::class, 'user_item'])->name('transaction.user_item'); // user/admin
+            Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transaction.transfer');
+
+            Route::post('/transfer_item/{id}', [TransactionController::class, 'transfer_item'])->name('transaction.transfer_item');
+            
+            Route::put('/update/{id}', [TransactionController::class, 'update'])->name('transaction.update');
+            Route::put('/transfer_update/{id}', [TransactionController::class, 'transfer_update'])->name('transaction.transfer_update');
+
+
+            Route::delete('/destroy/{id}', [TransactionController::class, 'tranfer_destroy'])->name('transaction.destroy');
+
+            Route::get('remove_show/{id}', [TransactionController::class, 'remove_show'])->name('transaction.remove_show');
+            Route::post('/remove_store', [TransactionController::class, 'remove_store'])->name('transaction.remove_store');
+            Route::middleware('role:0')->group(function () {
+                Route::get('edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'edit'])->name('transaction.edit');
+                Route::get('/item/{id}/loc_id/{loc_id}', [TransactionController::class, 'item'])->name('transaction.item');
+                Route::delete('/delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
+                Route::get('remove_edit/{id}/loc_id/{loc_id}', [TransactionController::class, 'remove_edit'])->name('transaction.remove_edit');
+            });
+        });
     });
-});
+
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'label'], function () {
+            Route::post('/autocomplete', [LabelController::class, 'autocomplete'])->name('label.autocomplete');
+        });
+    });
+
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'unit'], function () {
+            Route::post('/autocomplete', [UnitController::class, 'autocomplete'])->name('unit.autocomplete');
+            Route::post('/store', [UnitController::class, 'store'])->name('unit.store');
+
+            Route::middleware('role:0')->group(function () {
+                Route::get('/', [UnitController::class, 'index'])->name('unit.index');
+                Route::get('/create', [UnitController::class, 'create'])->name('unit.create');
+                Route::get('/edit/{id}', [UnitController::class, 'edit'])->name('unit.edit');
+                Route::patch('/update/{id}', [UnitController::class, 'update'])->name('unit.update');
+            });
+        });
+    });

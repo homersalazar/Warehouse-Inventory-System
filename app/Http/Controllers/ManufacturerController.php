@@ -25,17 +25,17 @@ class ManufacturerController extends Controller
         ]);
         
         if ($validate) {
-            $location = Manufacturer::firstOrCreate([
+            $manufacturer = Manufacturer::firstOrCreate([
                 'manufacturer_name' => ucwords($request->manufacturer_name),
                 'manufacturer_status' => 0, // 0 - active, 1 - deactivated
             ]);
 
-            if ($location->wasRecentlyCreated) {
+            if ($manufacturer->wasRecentlyCreated) {
                 return redirect()->route('manufacturer.index')
                 ->with('success', ucwords($request->manufacturer_name).' has been created successfully.');
             } else {
                 return redirect()->back()
-                ->with('success', ucwords($request->manufacturer_name).' already exists.');
+                ->with('error', ucwords($request->manufacturer_name).' already exists.');
             }
         }
     }

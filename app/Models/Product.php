@@ -30,7 +30,7 @@ class Product extends Model
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->hasMany(Transaction::class, 'prod_sku');
     }
 
     public function pending()

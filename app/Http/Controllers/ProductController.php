@@ -68,7 +68,7 @@ class ProductController extends Controller
                                     '.strtoupper($row->prod_partno).'
                                 </td>
                                 <td class="px-6">
-                                    '.ucwords($row->manufacturer->manufacturer_name).'
+                                    '.ucwords($row->manufacturer?->manufacturer_name).'
                                 </td>
                             </tr>';
                 }
@@ -132,9 +132,9 @@ class ProductController extends Controller
             'prod_name' => $request->prod_name,
             'prod_sku' => $sku_id,
             'prod_partno' => $request->prod_partno,
-            'unit_id' => !empty($request->unit_id) ?  $request->unit_id : $units_id,
-            'label_id' => !empty($request->label_id) ?  $request->label_id : $labels_id,
-            'manufacturer_id' => !empty($request->manufacturer_id) ?  $request->manufacturer_id : $manufacturers_id,
+            'unit_id' => empty($request->unit_id) ?  $request->unit_id : $units_id,
+            'label_id' => empty($request->label_id) ?  $request->label_id : $labels_id,
+            'manufacturer_id' => empty($request->manufacturer_id) ?  $request->manufacturer_id : $manufacturers_id,
             'pref_id' => $min
         ]);
         $product->save();
@@ -158,7 +158,7 @@ class ProductController extends Controller
             'tran_serial' => $request->tran_serial,
             'tran_remarks' => $request->tran_remarks,
             'tran_action' => $addAction,
-            'area_id' => !empty($request->area_id) ?  $request->area_id : $areas_id,
+            'area_id' => empty($request->area_id) ?  $request->area_id : $areas_id,
             'location_id' => $location_id,
             'tran_remarks' => $request->tran_remarks,
             'user_id' => Auth::user()->id
@@ -271,7 +271,7 @@ class ProductController extends Controller
                                     '.ucwords($row->prod_partno).'
                                 </td>
                                 <td class="px-6">
-                                    '.ucwords($row->manufacturer->manufacturer_name).'
+                                    '.ucwords($row->manufacturer?->manufacturer_name).'
                                 </td>
                             </tr>';
                 }
