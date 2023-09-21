@@ -89,8 +89,9 @@ class ProductController extends Controller
     public function store(Request $request){
         $request->validate([
             'prod_name' => 'required|unique:products,prod_name',
-            'tran_quantity' => 'required'
+            // 'tran_quantity' => 'required'
         ]);
+        $label = $unit = $manufacturer = NULL;
 
         if (empty($request->label_id) && !empty($request->label_name)) {
             $label = Label::updateOrCreate([
@@ -98,6 +99,13 @@ class ProductController extends Controller
             ]);
             $label->save();
             $labels_id = $label->id;
+        }
+        if (empty($request->label_name) && empty($request->label_id)){
+            $label = NULL;
+        }elseif (!empty($request->label_id)){
+            $label = $request->label_id;
+        }else{
+            $label = $labels_id;
         }
 
         if (empty($request->manufacturer_id) && !empty($request->manufacturer_name)) {
@@ -108,6 +116,13 @@ class ProductController extends Controller
             $manufacturer->save();
             $manufacturers_id = $manufacturer->id;
         }
+        if (empty($request->manufacturer_name) && empty($request->manufacturer_id)){
+            $manufacturer = NULL;
+        }elseif (!empty($request->manufacturer_id)){
+            $manufacturer = $request->manufacturer_id;
+        }else{
+            $manufacturer = $manufacturers_id;
+        }
 
         if (empty($request->unit_id) && !empty($request->unit_name)) {
             $unit = Unit::updateOrCreate([
@@ -116,6 +131,15 @@ class ProductController extends Controller
             $unit->save();
             $units_id = $unit->id;
         }
+
+        if (empty($request->unit_name) && empty($request->unit_id)){
+            $unit = NULL;
+        }elseif (!empty($request->unit_id)){
+            $unit = $request->unit_id;
+        }else{
+            $unit = $units_id;
+        }
+
 
         $pref = Preference::whereId(1)->first();
         $min = '';
@@ -126,15 +150,16 @@ class ProductController extends Controller
         }else if($request->pref_id == 2){
             $min;
         }
+        
         $prod_skus = Product::latest('id')->value('id');
         $sku_id = $prod_skus != '' ? $prod_skus + 1 : 1;
         $product = Product::firstOrCreate([
             'prod_name' => $request->prod_name,
             'prod_sku' => $sku_id,
             'prod_partno' => $request->prod_partno,
-            'unit_id' => empty($request->unit_id) ?  $request->unit_id : $units_id,
-            'label_id' => empty($request->label_id) ?  $request->label_id : $labels_id,
-            'manufacturer_id' => empty($request->manufacturer_id) ?  $request->manufacturer_id : $manufacturers_id,
+            'unit_id' => $unit,
+            'label_id' => $label,
+            'manufacturer_id' => $manufacturer,
             'pref_id' => $min
         ]);
         $product->save();
@@ -147,6 +172,16 @@ class ProductController extends Controller
             $area->save();
             $areas_id = $area->id;
         }
+
+        $area = NULL;
+        if (empty($request->area_name) && empty($request->area_id)){
+            $area = NULL;
+        }elseif (!empty($request->area_id)){
+            $area = $request->area_id;
+        }else{
+            $area = $areas_id;
+        }
+
         $location_id = session('role') == 0 ? $request->universal_location : auth()->user()->location_id;
         $addAction = 0;
         $transaction = Transaction::firstOrCreate([
@@ -158,7 +193,7 @@ class ProductController extends Controller
             'tran_serial' => $request->tran_serial,
             'tran_remarks' => $request->tran_remarks,
             'tran_action' => $addAction,
-            'area_id' => empty($request->area_id) ?  $request->area_id : $areas_id,
+            'area_id' => $area,
             'location_id' => $location_id,
             'tran_remarks' => $request->tran_remarks,
             'user_id' => Auth::user()->id

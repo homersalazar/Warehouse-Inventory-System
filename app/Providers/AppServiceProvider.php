@@ -29,6 +29,5 @@ class AppServiceProvider extends ServiceProvider
             $locations = Location::all(); // Retrieve all locations from the database
             $view->with('locations', $locations);
         });
- 
     }
 }

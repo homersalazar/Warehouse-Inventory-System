@@ -8,6 +8,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -165,3 +166,16 @@ use Illuminate\Support\Facades\Route;
             });
         });
     });
+
+    Route::middleware('checkLoggedIn')->group(function() {
+        Route::group(['prefix' => 'report'], function () {
+            Route::get('/', [ReportController::class, 'index'])->name('report.index');
+            Route::get('/inventory_transaction', [ReportController::class, 'inventory_transaction'])->name('report.inventory_transaction');
+            Route::post('/search_inventory', [ReportController::class, 'search_inventory'])->name('report.search_inventory');
+            
+            Route::get('/daily_transaction', [ReportController::class, 'daily_transaction'])->name('report.daily_transaction');
+        });
+    });
+
+
+    

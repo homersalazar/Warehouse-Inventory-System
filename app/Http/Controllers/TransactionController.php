@@ -46,7 +46,7 @@ class TransactionController extends Controller
         ]);
 
         $addAction = 0;
-        $areas_id = null;
+        $area = null;
 
         $transactionArea = Transaction::where('prod_sku', $request->prod_sku)
             ->where('location_id', Auth::user()->location_id)
@@ -66,13 +66,21 @@ class TransactionController extends Controller
                 $areas_id = $area->id;
             }
         }
+
+        if (empty($request->area_name) && empty($request->area_id)){
+            $area = NULL;
+        }elseif (!empty($request->area_id)){
+            $area = $request->area_id;
+        }else{
+            $area = $areas_id;
+        }
         $transaction = Transaction::updateOrCreate([
             'prod_sku' => $request->prod_sku,
             'tran_date' => $request->tran_date,
             'tran_option' => $request->tran_option,
             'tran_quantity' => $request->tran_quantity,
             'tran_unit' => $request->tran_unit,
-            'area_id' => $areas_id,
+            'area_id' => $area,
             'tran_drno' => $request->tran_drno,
             'tran_mpr' => $request->tran_mpr,
             'tran_serial' => $request->tran_serial,

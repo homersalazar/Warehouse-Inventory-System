@@ -52,14 +52,11 @@
                         </select>
                     </th>
                     <th class="px-6 py-4">
-                        <select type="text" id="selLoc" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                            @if (session('role') == 0)
-                                @foreach ($locations as $item)
-                                    <option value="{{ $item->id }}">{{ $item->loc_name }}</option>
-                                @endforeach
-                            @elseif (session('role') == 1)
-                                <option value="{{ $user->location->id }}">{{ $user->location->loc_name }}</option>
-                            @endif
+                        <select type="text" class="universal_location border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            <option value="All Location" selected>All Location</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location->loc_name }}"> {{ $location->loc_name }}</option>
+                            @endforeach
                         </select>
                     </th>
                 </tr>   
@@ -71,32 +68,16 @@
                             {{ ucwords($row->prod_name) }}
                         </td>
                         <td class="px-6 py-4">
-                            SKU0{{ $row->prod_sku }}
+                            SKU0{{ $row->tran_sku }}
                         </td>
                         <td class="px-6 py-4">
-                            @if ($transactionArea->isNotEmpty())
-                                {{ strtoupper($transactionArea->first()->area->area_name) }}
-                            @endif
+                            {{ $row->area_name }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $row->manufacturer?->manufacturer_name }}
+                            {{ $row->manufacturer_name }}
                         </td>
                         <td class="px-6 py-4">
-                            @if (session('role') == 0)
-                                @if ($row->preference->pref_value <= $productTotals[$row->id])
-                                    ({{ $productTotals[$row->id] }})
-                                @else
-                                    <span
-                                        class="bg-red-600 px-2.5 py-0.5 rounded-lg text-white font-bold">({{ $productTotals[$row->id] }})</span>
-                                @endif
-                            @elseif (session('role') == 1)
-                                @if ($row->preference->pref_value <= $productTotals[$row->id])
-                                    {{ $user->location->loc_name }} ({{ $productTotals[$row->id] }})
-                                @else
-                                    {{ $user->location->loc_name }} <span
-                                        class="bg-red-600 px-2.5 py-0.5 rounded-lg text-white font-bold">({{ $productTotals[$row->id] }})</span>
-                                @endif
-                            @endif
+                            {{ $row->loc_name }} <span>{{ $row->total_in - $row->total_out }}</span>
                         </td>
                     </tr>
                 @endforeach
@@ -161,6 +142,32 @@
                     table.columns(3).search(selectedValue).draw();
                 }
             });
+
+            // Event listener for the select element
+            $('.universal_location').on('change', function() {
+                const selectedValue = $(this).val();
+                if (selectedValue === "All Location") {
+                    table.columns(4).search('').draw();
+                } else {
+                    table.columns(4).search(selectedValue).draw();
+                }
+            });
+
+
+            // var url = window.location.href; 
+            // var all_datas = url.split('?ID='); 
+            // var id = (all_datas[1]); 
+            // $(".universal_location").change(function(){ 
+            //     $.ajax({ 
+            //         type:"POST", 
+            //         url:"/dashboard", 
+            //         data:{id:id}, 
+            //         success:function(outputs){ 
+
+            //         } 
+            //     }); 
+            // }); 
+            
         });
     </script>
 @endsection

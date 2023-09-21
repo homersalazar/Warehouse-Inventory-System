@@ -10,47 +10,46 @@
             <table id="activatedTable" style="width: 100%;" class="w-full text-sm text-left">
                 <thead>
                     <tr>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Name
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Email
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Company Administrator
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Activated?
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Locations
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Action
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($user_activated as $user)
-
                         <tr class="border-b">
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ ucwords($user->name) }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->email }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->role == 0 ? "Yes" : "No" }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{  $user->role == 0 ? "All Location" : $user->location->loc_name }}
                             </td>
-                            <td class="px-6">
-                                <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
+                            <td class="px-3">
+                                <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base py-2.5 mr-2">
                                     <i class="fa-regular text-blue-600 fa-pen-to-square"></i>
                                 </a>
                                 <a href="{{ route('user.edit_password' , ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
@@ -77,22 +76,22 @@
             <table id="deactivatedTable" style="width: 100%;" class="w-full text-sm text-left">
                 <thead>
                     <tr>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Name
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Email
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Company Administrator
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Activated?
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Locations
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="px-3">
                             Action
                         </th>
                     </tr>
@@ -100,22 +99,22 @@
                 <tbody>
                     @foreach ($user_deactivated as $user)
                         <tr class="border-b">
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ ucwords($user->name) }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->email }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->role == 0 ? "Yes" : "No" }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $user->status == 0 ? "Yes" : "No" }}
                             </td>
-                            <td class="px-6 font-medium text-gray-900 whitespace-nowrap">
+                            <td class="px-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{-- {{  $user->role == 0 ? "All Location" : $user->location->loc_name }} --}}
                             </td>
-                            <td class="px-6">
+                            <td class="px-3">
                                 <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="rounded-lg text-base  py-2.5 mr-2 mb-2">
                                     <i class="fa-regular text-blue-600 fa-pen-to-square"></i>
                                 </a>

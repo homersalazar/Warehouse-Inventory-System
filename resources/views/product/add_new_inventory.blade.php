@@ -13,7 +13,7 @@
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">SKU</label>                    
-                        <input type="text" name="prod_sku" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" readonly placeholder="auto generated">    
+                        <input type="text" name="prod_sku" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" readonly placeholder="auto generated">    
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="sm:w-[10rem] sm:text-right">Part Number</label>                    
