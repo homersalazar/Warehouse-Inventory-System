@@ -174,6 +174,8 @@ use Illuminate\Support\Facades\Route;
             Route::post('/search_inventory', [ReportController::class, 'search_inventory'])->name('report.search_inventory');
             
             Route::get('/daily_transaction', [ReportController::class, 'daily_transaction'])->name('report.daily_transaction');
+            Route::post('/search_daily', [ReportController::class, 'search_daily'])->name('report.search_daily');
+
         });
     });
 

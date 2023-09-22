@@ -6,10 +6,10 @@
         <div class="block max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow px-5 py-5">
             <form action="{{ route('report.search_inventory') }}" method="POST" id="search_inventory">
                 @csrf
-                <div class="flex flex-col sm:flex-row sm:gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-5 sm:gap-5">
                     <div class="mb-6">
                         <label class="sm:text-right">Locations: </label>                    
-                        <select name="location_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-56 p-2.5">  
+                        <select name="location_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">  
                             <option value="" selected>Select Location</option>  
                             @foreach ($locations as $row)
                                 <option value="{{ $row->id }}">{{ $row->loc_name }}</option>  
@@ -18,7 +18,7 @@
                     </div>
                     <div class="mb-6">
                         <label class="sm:text-right">Areas: </label>                    
-                        <select name="area_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-56 p-2.5">  
+                        <select name="area_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">  
                             <option selected>Select Area</option>  
                             @foreach ($areas as $row)
                                 <option value="{{ $row->id }}">{{ $row->area_name }}</option>  
@@ -27,14 +27,14 @@
                     </div>
                     <div class="mb-6">
                         <label class="sm:text-right">Start Date: </label>                    
-                        <input type="date" name="start_date" value="{{ date('Y-m-01') }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-56 p-2.5">    
+                        <input type="date" name="start_date" value="{{ date('Y-m-01') }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">    
                     </div>
                     <div class="mb-6">
                         <label class="sm:text-right">End Date: </label>                    
-                        <input type="date" name="end_date" value="{{ date('Y-m-t') }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-56 p-2.5">    
+                        <input type="date" name="end_date" value="{{ date('Y-m-t') }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">    
                     </div>
                     <div class="mb-6 mt-6">
-                        <button type="submit" name="search" id="search" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 sm:w-56 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Generate Report</button>
+                        <button type="submit" name="search" id="search" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Generate Report</button>
                     </div>
                 </div>
             </form>
@@ -95,4 +95,28 @@
             @endif
         </div>        
     </div>
+    <script>
+        const title = document.getElementById('title').textContent;
+        const Excel = (type) => {
+            var data = document.getElementById('transaction_table');
+            var excelFile = XLSX.utils.table_to_book(data, {sheet: "sheet1"});
+            XLSX.write(excelFile, { bookType: type, bookSST: true, type: 'base64' });
+            XLSX.writeFile(excelFile, `${title}.${type}`);
+        }
+
+        const PDF = () => {
+            html2canvas(document.getElementById('transaction_table'), {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download(`${title}.pdf`);
+                }
+            });
+        }
+    </script>
 @endsection

@@ -44,4 +44,37 @@ class ReportController extends Controller
     {
         return view('report.daily_transaction');
     }
+
+    public function search_daily(Request $request)
+    {
+        $start = $request->start_date;
+        $end = $request->end_date;
+        $locationId = $request->location_id;
+        $query = DB::table('transactions')
+            ->select([
+                'products.prod_name',
+                'products.prod_sku AS tran_sku',
+                'tran_date',
+                'tran_unit',
+                'tran_remarks',
+                'loc_name',
+                'tran_action',
+                'tran_quantity',
+                'tran_drno',
+                'tran_mpr'
+            ])
+            ->leftJoin('products', 'transactions.prod_sku', '=', 'products.prod_sku')
+            ->leftJoin('locations', 'transactions.location_id', '=', 'locations.id')
+            ->whereBetween('tran_date', [$start, $end]);
+            if ($request->has('location_id') && $request->location_id !== null) {
+                $query->where('location_id', $request->location_id);
+            }
+            $sql = $query->get();
+    return view('report.daily_transaction', compact('sql'));
+    }
 }
+
+                            
+       // if ($locationId) {
+        //     $query->where('location_id', $locationId);
+        // }
