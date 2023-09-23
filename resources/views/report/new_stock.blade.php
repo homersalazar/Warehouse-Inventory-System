@@ -30,6 +30,9 @@
                     </p>
                     <button type="button" onclick="Excel('xlsx')" class="hover:underline font-bold text-blue-600">Excel</button>
                 </div>
+                <div class=" max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow px-5 py-5">
+                    <p>Showing transactions starting {{ date('F j, Y', strtotime($_POST['start_date'])) }} through {{ date('F j, Y', strtotime($_POST['end_date'])) }} for all locations and all areas</p>
+                </div>
                 <table id="new_stock_table" style="width: 100%;" class="w-full text-sm text-left">
                     <thead>
                         <tr class="text-center">

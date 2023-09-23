@@ -177,6 +177,9 @@ use Illuminate\Support\Facades\Route;
             Route::post('/search_daily', [ReportController::class, 'search_daily'])->name('report.search_daily');
 
             Route::get('/new_stock', [ReportController::class, 'new_stock'])->name('report.new_stock');
+            Route::post('/search_new_stock', [ReportController::class, 'search_new_stock'])->name('report.search_new_stock');
+
+            Route::get('/current_stock_table', [ReportController::class, 'current_stock_table'])->name('report.current_stock_table');
             Route::post('/new_stock_counts', [ReportController::class, 'search_new_stock'])->name('report.search_new_stock');
 
         });

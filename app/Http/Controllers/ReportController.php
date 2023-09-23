@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Location;
+use App\Models\Pending;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -98,4 +101,30 @@ class ReportController extends Controller
             ->get();
         return view('report.new_stock', compact('query'));
     }
+
+    public function current_stock_table()
+    {
+        $locationSite = Location::all();
+    
+        $query = DB::table('products')
+            ->select([
+                'products.prod_name',
+                'products.prod_sku AS prod_sku',
+            ]);
+    
+        foreach ($locationSite as $loc) {
+            $query->selectRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) AND transactions.location_id = ' . $loc->id . ' THEN transactions.tran_quantity ELSE 0 END) AS total_in_' . $loc->id)
+                ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) AND transactions.location_id = ' . $loc->id . ' THEN transactions.tran_quantity ELSE 0 END) AS total_out_' . $loc->id);
+        }
+        $query->selectRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) AS total_in_all')
+            ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) AS total_out_all')
+            ->leftJoin('transactions', 'transactions.prod_sku', '=', 'products.prod_sku')
+            ->groupBy('products.prod_name', 'products.prod_sku')
+            ->orderByRaw('products.prod_name ASC'); 
+        $data = $query->get();
+        return view('report.current_stock_table', compact('locationSite', 'data'));
+    }
+    
+    
+
 }
