@@ -180,8 +180,8 @@ use Illuminate\Support\Facades\Route;
             Route::post('/search_new_stock', [ReportController::class, 'search_new_stock'])->name('report.search_new_stock');
 
             Route::get('/current_stock_table', [ReportController::class, 'current_stock_table'])->name('report.current_stock_table');
-            Route::post('/new_stock_counts', [ReportController::class, 'search_new_stock'])->name('report.search_new_stock');
 
+            Route::get('/current_stock_list', [ReportController::class, 'current_stock_list'])->name('report.current_stock_list');
         });
     });
 

@@ -4,9 +4,15 @@
     <div class="flex flex-col pt-5 px-2 sm:px-10 w-full mb-10">
         <h1 class="text-left text-lg sm:text-2xl font-bold mb-2">Current Stock Transactions</h1>
         <div class=" max-w-full p-6 bg-white border border-gray-200 rounded-lg shadow px-5 py-5">
-            <p>Showing transactions starting  through for all locations and all areas</p>
+            <p>Last generated: {{ date("Y-m-d h:i:sa") }}</p>
         </div>
-        <table id="new_stock_table" style="width: 100%;" class="w-full text-sm text-left">
+        <div class="flex flex-row gap-2 py-2 sm:ml-8">
+            <p class="font-bold">
+                Export Results To:
+            </p>
+            <button type="button" onclick="Excel('xlsx')" class="hover:underline font-bold text-blue-600">Excel</button>
+        </div>
+        <table id="current_stock_table" style="width: 100%;" class="w-full text-sm text-left">
             <thead>
                 <tr class="text-center">
                     <th id="title" class="py-6 text-2xl underline" colspan="5">Current Stock Table</th>
@@ -53,7 +59,7 @@
     <script>
         const title = document.getElementById('title').textContent;
         const Excel = (type) => {
-            var data = document.getElementById('new_stock_table');
+            var data = document.getElementById('current_stock_table');
             var excelFile = XLSX.utils.table_to_book(data, {
                 sheet: "sheet1"
             });
