@@ -142,4 +142,23 @@ class ReportController extends Controller
         return view('report.current_stock_list', compact('query'));    
     }
 
+    public function low_stock_list()
+    {
+        $query = DB::table('transactions')
+        ->select([
+            'products.prod_name',
+            'products.prod_sku AS tran_sku',
+            'locations.loc_name AS loc_name',
+            'preferences.pref_value'
+        ])
+        ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) AS total_in')
+        ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) AS total_out')
+        ->leftJoin('products', 'transactions.prod_sku', '=', 'products.prod_sku')
+        ->leftJoin('preferences', 'preferences.id', '=', 'products.pref_id')
+        ->leftJoin('locations', 'transactions.location_id', '=', 'locations.id')
+        ->groupBy('transactions.location_id', 'tran_sku')
+        ->havingRaw('total_in - total_out <= preferences.pref_value')
+        ->get();
+        return view('report.low_stock_list', compact('query'));      
+    }
 }
