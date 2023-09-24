@@ -182,6 +182,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/current_stock_table', [ReportController::class, 'current_stock_table'])->name('report.current_stock_table');
             Route::get('/current_stock_list', [ReportController::class, 'current_stock_list'])->name('report.current_stock_list');
             Route::get('/low_stock_list', [ReportController::class, 'low_stock_list'])->name('report.low_stock_list');
+            Route::get('/unavailable', [ReportController::class, 'unavailable'])->name('report.unavailable');
         });
     });
 

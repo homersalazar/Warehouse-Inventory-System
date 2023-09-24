@@ -161,4 +161,20 @@ class ReportController extends Controller
         ->get();
         return view('report.low_stock_list', compact('query'));      
     }
+
+    public function unavailable()
+    {
+        $query = DB::table('products')
+        ->select([
+            'products.prod_name',
+            'products.prod_sku AS tran_sku',
+            'locations.loc_name AS loc_name'
+        ])
+        ->leftJoin('transactions', 'transactions.prod_sku', '=', 'products.prod_sku')
+        ->leftJoin('locations', 'transactions.location_id', '=', 'locations.id')
+        ->groupBy('transactions.location_id', 'tran_sku')
+        ->havingRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) - SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) = 0')
+        ->get();
+        return view('report.unavailable', compact('query'));      
+    }
 }
