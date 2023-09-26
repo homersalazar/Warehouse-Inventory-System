@@ -23,7 +23,7 @@
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
                             <label class="sm:w-[10rem] sm:text-right">Unit</label>
-                            <input type="text" name="unit_name" value="{{ strtoupper($product->unit->unit_name) }}" autocomplete="off" id="unit_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="text" name="unit_name" value="{{ $product && $product->unit ? strtoupper($product->unit->unit_name) : '' }}" autocomplete="off" id="unit_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
                             <input type="hidden" name="unit_id" id="unit_id" value="{{ $product->unit_id }}">  {{-- store id of the selected label --}}
                         </div>
                         <div id="unitList" class="z-10 sm:ml-[10.8rem]"></div>                                
@@ -31,7 +31,7 @@
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
                             <label class="sm:w-[10rem] sm:text-right">Label</label>
-                            <input type="text" name="label_name" value="{{ $product->label->label_name }}" autocomplete="off" id="label_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="text" name="label_name" value="{{ $product && $product->unit ? $product->label->label_name : '' }}" autocomplete="off" id="label_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
                             <input type="hidden" name="label_id" id="label_id" value="{{ $product->label_id }}">  {{-- store id of the selected label --}}
                         </div>
                         <div id="labelList" class="z-10 sm:ml-[10.8rem]"></div>                                
@@ -39,7 +39,7 @@
                     <div class="flex flex-col">
                         <div class="flex flex-col sm:flex-row gap-3">
                             <label class="sm:w-[10rem] sm:text-right">Manufacturer</label>
-                            <input type="text" name="manufacturer_name" value="{{ $product->manufacturer->manufacturer_name }}"  autocomplete="off" id="manufacturer_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
+                            <input type="text" name="manufacturer_name" value="{{ $product && $product->unit ? $product->manufacturer->manufacturer_name : '' }}"  autocomplete="off" id="manufacturer_name" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full sm:w-96 p-2.5" onkeyup="search(this)">
                             <input type="hidden" name="manufacturer_id" id="manufacturer_id" value="{{ $product->manufacturer_id }}">  {{-- store id of the selected area --}}
                         </div>
                         <div id="manufacturerList" class="z-10 sm:ml-[10.8rem]"></div>                                

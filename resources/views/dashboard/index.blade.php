@@ -11,10 +11,10 @@
                     <th scope="col" class="px-6">
                         Sku
                     </th>
-                    <th scope="col" class="px-6">
+                    <th scope="col" class="px-6 max-sm:hidden">
                         Area
                     </th>
-                    <th scope="col" class="px-6">
+                    <th scope="col" class="px-6 max-sm:hidden">
                         Manufacturers
                     </th>
                     <th scope="col" class="px-6">
@@ -52,54 +52,97 @@
                         </select>
                     </th>
                     <th class="px-6 py-4">
-                        <select type="text" class="universal_location border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
-                            <option value="All Location" selected>All Location</option>
-                            @foreach ($locations as $location)
+                        <select type="text" id="universal_location" class="universal_location border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full">
+                            @if (session('role') == 0)
+                                <option value="All Location" selected>All Location</option>
+                                @foreach ($locations as $location)
+                                    <option value="{{ $location->loc_name }}"> {{ $location->loc_name }}</option>
+                                @endforeach
+                            @else
                                 <option value="{{ $location->loc_name }}"> {{ $location->loc_name }}</option>
-                            @endforeach
+                            @endif
                         </select>
                     </th>
                 </tr>   
             </thead>
             <tbody>
-                @foreach ($products as $row)
-                    <tr class="border-b">
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            {{ ucwords($row->prod_name) }}
-                        </td>
-                        <td class="px-6 py-4">
-                            SKU0{{ $row->tran_sku }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $row->area_name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $row->manufacturer_name }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $row->loc_name }} <span>{{ $row->total_in - $row->total_out }}</span>
-                        </td>
-                    </tr>
-                @endforeach
+                @php
+                    $currentSku = null; // Initialize current SKU
+                @endphp
+                    @foreach ($products as $product)
+                        @if ($product->prod_sku !== $currentSku)
+                            <tr class="border-b">
+                                <td class="px-6 py-4">
+                                    @if (session('role') ==0)
+                                        {{ ucwords($product->prod_name) }}
+                                    @else 
+                                        <a href="/transaction/item/{{ $product->prod_sku }}" class="underline text-blue-600" id="product_link">{{ ucwords($product->prod_name) }}</a>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    SKU0{{ $product->prod_sku }}                                                                   
+                                </td>
+                                <td class="px-6 py-4 max-sm:hidden">
+                                    {{ $product->area_name }}
+                                </td>
+                                <td class="px-6 py-4 max-sm:hidden">
+                                    {{ $product->manufacturer_name }}
+                                </td>
+                                <td class="px-6">
+                                    @if ($product->pref_value <= $product->total_stock)
+                                        {{ $product->loc_name }} ({{ $product->total_stock }})    
+                                    @else
+                                        {{ $product->loc_name }}
+                                        <span class="bg-red-600 px-2.5 py-0.5 rounded-lg text-white font-bold">
+                                            ({{ $product->total_stock }})                                        
+                                        </span>                   
+                                    @endif                                
+                                </td>
+                            </tr>
+                        @else
+                            {{-- Continue adding rows for the same SKU --}}
+                            <tr class="border-b">
+                                <td class="primary_hidden invisible px-6">
+                                    @if (session('role') ==0)
+                                        {{ ucwords($product->prod_name) }}
+                                    @else 
+                                        <a href="/transaction/item/{{ $product->prod_sku }}" class="underline text-blue-600" id="product_link">{{ ucwords($product->prod_name) }}</a>
+                                    @endif                             
+                                </td>
+                                <td class="primary_hidden invisible px-6 py-4">
+                                    SKU0{{ $product->prod_sku }}                                                                   
+                                </td>
+                                </td>
+                                <td class="px-6 py-4 max-sm:hidden">
+                                    {{ $product->area_name }}
+                                </td>
+                                <td class="primary_hidden invisible px-6 py-4 max-sm:hidden">
+                                    {{ $product->manufacturer_name }}
+                                </td>
+                                <td class="px-6">
+                                    @if ($product->pref_value <= $product->total_stock)
+                                        {{ $product->loc_name }} ({{ $product->total_stock }})    
+                                    @else
+                                        {{ $product->loc_name }}
+                                        <span class="bg-red-600 px-2.5 py-0.5 rounded-lg text-white font-bold">
+                                            ({{ $product->total_stock }})                                        
+                                        </span>                   
+                                    @endif
+                                </td>
+                            </tr>
+                        @endif
+                        @php
+                            $currentSku = $product->prod_sku; // Update current SKU
+                        @endphp
+                    @endforeach
             </tbody>
         </table>
     </div>
     <script>
         $(document).ready(function() {
             const table = $('#productTable').DataTable({
-                responsive: true,
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: 0,
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: 4,
-                    },
-                ],
                 lengthChange: false,
                 info: false,
-                // searching: false,
                 sort: false
             });
 
@@ -151,23 +194,13 @@
                 } else {
                     table.columns(4).search(selectedValue).draw();
                 }
+
+                if (selectedValue !== "All Location") {
+                    $('.primary_hidden').removeClass('invisible');
+                } else {
+                    $('.primary_hidden').addClass('invisible');
+                }
             });
-
-
-            // var url = window.location.href; 
-            // var all_datas = url.split('?ID='); 
-            // var id = (all_datas[1]); 
-            // $(".universal_location").change(function(){ 
-            //     $.ajax({ 
-            //         type:"POST", 
-            //         url:"/dashboard", 
-            //         data:{id:id}, 
-            //         success:function(outputs){ 
-
-            //         } 
-            //     }); 
-            // }); 
-            
         });
     </script>
 @endsection

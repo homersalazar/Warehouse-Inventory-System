@@ -23,19 +23,58 @@ class DashboardController extends Controller
     {
         $areas = Area::all();
         $manufacturers = Manufacturer::all();
-        $products = DB::table('transactions')
-            ->select('transactions.prod_sku as tran_sku', DB::raw('MAX(products.prod_name) AS prod_name'), DB::raw('MAX(manufacturers.manufacturer_name) AS manufacturer_name') , DB::raw('MAX(areas.area_name) AS area_name') , DB::raw('MAX(locations.loc_name) AS loc_name'))
-            ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) AS total_in')
-            ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) AS total_out')
-            ->leftJoin('products', 'products.prod_sku', '=', 'transactions.prod_sku')
+        if(session('role') == 0 ){
+            $products = DB::table('products')
+            ->select(
+                'products.prod_sku as prod_sku',
+                'products.prod_name as prod_name',
+                'products.prod_partno as prod_partno',
+                'manufacturers.manufacturer_name as manufacturer_name',
+                'areas.area_name as area_name',
+                'locations.loc_name as loc_name',
+                'preferences.pref_value as pref_value',
+                DB::raw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) - SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) AS total_stock')
+            )
+            ->crossJoin('locations') // Cross join to get all locations
+            ->leftJoin('transactions', function ($join) {
+                $join->on('products.prod_sku', '=', 'transactions.prod_sku')
+                    ->on('locations.id', '=', 'transactions.location_id');
+            })
             ->leftJoin('areas', 'transactions.area_id', '=', 'areas.id')
             ->leftJoin('manufacturers', 'products.manufacturer_id', '=', 'manufacturers.id')
-            ->leftJoin('locations', 'transactions.location_id', '=', 'locations.id')
-            ->groupBy('tran_sku', 'transactions.location_id')
+            ->leftJoin('preferences', 'preferences.id', '=', 'products.pref_id')
+            ->groupBy('products.prod_sku', 'locations.loc_name')
             ->paginate();
-        return view('dashboard.index', compact('products', 'areas', 'manufacturers'));
+            return view('dashboard.index', compact('products', 'areas', 'manufacturers'));
+        }else{
+            $user = Auth::user()->location_id;
+            $location = Location::find($user);
+            $products = DB::table('products')
+            ->select(
+                'products.prod_sku as prod_sku',
+                'products.prod_name as prod_name',
+                'products.prod_partno as prod_partno',
+                'manufacturers.manufacturer_name as manufacturer_name',
+                'areas.area_name as area_name',
+                'locations.loc_name as loc_name',
+                'preferences.pref_value as pref_value',
+                DB::raw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) - SUM(CASE WHEN transactions.tran_action IN (1, 3, 4, 5) THEN transactions.tran_quantity ELSE 0 END) AS total_stock')
+            )
+            ->crossJoin('locations') // Cross join to get all locations
+            ->leftJoin('transactions', function ($join) {
+                $join->on('products.prod_sku', '=', 'transactions.prod_sku')
+                    ->on('locations.id', '=', 'transactions.location_id');
+            })
+            ->leftJoin('areas', 'transactions.area_id', '=', 'areas.id')
+            ->leftJoin('manufacturers', 'products.manufacturer_id', '=', 'manufacturers.id')
+            ->leftJoin('preferences', 'preferences.id', '=', 'products.pref_id')    
+            ->groupBy('products.prod_sku', 'locations.loc_name')
+            ->where('location_id', $user)
+            ->paginate();
+            return view('dashboard.index', compact('products', 'areas', 'manufacturers', 'location'));
+        }
     }
-   
+
     /**
      * Show the form for creating a new resource.
      *

@@ -19,15 +19,13 @@ class ReportController extends Controller
 
     public function inventory_transaction()
     {
-        $areas = Area::all();
-        return view('report.inventory_transaction', compact('areas'));
+        return view('report.inventory_transaction');
     }
 
     public function search_inventory(Request $request)
     {
         $start = $request->start_date;
         $end = $request->end_date;
-        $areas = Area::all();
         $query = DB::table('transactions')
             ->select('transactions.prod_sku as tran_sku', DB::raw('MAX(products.prod_name) AS prod_name'))
             ->selectRaw('SUM(CASE WHEN transactions.tran_action IN (0, 2) THEN transactions.tran_quantity ELSE 0 END) AS total_in')
@@ -40,7 +38,7 @@ class ReportController extends Controller
                 $query->where('location_id', $request->location_id);
             }
             $sql = $query->get();       
-        return view('report.inventory_transaction', compact('sql', 'areas'));
+        return view('report.inventory_transaction', compact('sql'));
     }
 
     public function daily_transaction()

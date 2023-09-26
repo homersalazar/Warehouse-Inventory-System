@@ -144,10 +144,10 @@
 
     @yield('content')    
     <script>
-            const universal_location = () => {
-                loc_id = document.getElementById('universal_location').value;
-            }
-            universal_location();
+        const universal_location = () => {
+            loc_id = document.getElementById('universal_location').value;
+        }
+        universal_location();
     </script>
     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>

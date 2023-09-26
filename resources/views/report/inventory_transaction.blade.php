@@ -17,15 +17,6 @@
                         </select>
                     </div>
                     <div class="mb-6">
-                        <label class="sm:text-right">Areas: </label>                    
-                        <select name="area_id" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">  
-                            <option selected>Select Area</option>  
-                            @foreach ($areas as $row)
-                                <option value="{{ $row->id }}">{{ $row->area_name }}</option>  
-                            @endforeach
-                        </select>                
-                    </div>
-                    <div class="mb-6">
                         <label class="sm:text-right">Start Date: </label>                    
                         <input type="date" name="start_date" value="{{ date('Y-m-01') }}" class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">    
                     </div>
